@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/zenfit_background"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp">
+
+        <ImageView
+            android:id="@+id/logoIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/zenfit_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="150dp"
+            android:text="Welcome back, Nick!"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/topCards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/settingsCard"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/settings_btn"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/moodCard"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="2"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/mood_btn"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/progressLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topCards"
+        android:layout_marginTop="24dp"
+        android:text="Overall progress:"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/progressPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topCards"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="24dp"
+        android:text="70%"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_below="@id/progressLabel"
+        android:layout_marginTop="8dp"
+        android:progress="70"
+        android:progressTint="@color/orange"
+        android:progressBackgroundTint="#2C2C2E" />
+
+    <!-- Next Workout Card -->
+    <RelativeLayout
+        android:id="@+id/workoutCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBar"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/card_background"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/nextWorkoutLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your next workout:"
+            android:textColor="@color/orange"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/workoutTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nextWorkoutLabel"
+            android:layout_marginTop="8dp"
+            android:text="Push ups"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:id="@+id/workoutDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/workoutTitle"
+            android:layout_marginTop="8dp"
+            android:columnCount="4">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration:\n30 minutes"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:layout_marginEnd="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reps:\n115"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:layout_marginEnd="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sets:\n15"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:layout_marginEnd="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exercise:\n5"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </GridLayout>
+
+        <Button
+            android:id="@+id/btnStartWorkout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/orange"
+            android:text="Start"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/caloriesCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/workoutCard"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/card_background"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/caloriesLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calories burned"
+            android:textColor="@color/orange"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/caloriesValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/caloriesLabel"
+            android:layout_marginTop="8dp"
+            android:text="941 kCal"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/caloriesSubtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/caloriesValue"
+            android:layout_marginTop="4dp"
+            android:text="Calories"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/caloriesSubtext"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration:\n12 Hours"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:layout_marginEnd="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Steps:\n2837"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:layout_marginEnd="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Distance:\n2.4 km"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/orange"
+            android:text="Details"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/btnStartWorkoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/caloriesCard"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/start_workout_btn"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent" />
+
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStartWorkoutMain"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/menu_btn"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/navbar_ellipse"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp">
+
+        <ImageButton
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/navbar_home_orange" />
+
+        <ImageButton
+            android:id="@+id/navWorkout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/navbar_gym" />
+
+        <ImageButton
+            android:id="@+id/navAdd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/navbar_add" />
+
+        <ImageButton
+            android:id="@+id/navCalendar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/navbar_calendar" />
+
+        <ImageButton
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/navbar_image" />
+    </LinearLayout>
+
+</RelativeLayout>
