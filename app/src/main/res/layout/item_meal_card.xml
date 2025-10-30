@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/card_background2"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/mealImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/meal_placeholder"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/mealName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/mealImage"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:text="Meal Name"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/calories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mealName"
+        android:layout_toEndOf="@id/mealImage"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:text="Calories"
+        android:textColor="#999999"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/caloriesValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/calories"
+        android:layout_toEndOf="@id/mealImage"
+        android:layout_marginStart="16dp"
+        android:text="1150 kcal"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/carbs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mealName"
+        android:layout_toEndOf="@id/calories"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:text="Carbs"
+        android:textColor="#999999"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/carbsValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/carbs"
+        android:layout_toEndOf="@id/caloriesValue"
+        android:layout_marginStart="24dp"
+        android:text="115g"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/protein"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mealName"
+        android:layout_toEndOf="@id/carbs"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:text="Protein"
+        android:textColor="#999999"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/proteinValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/protein"
+        android:layout_toEndOf="@id/carbsValue"
+        android:layout_marginStart="24dp"
+        android:text="15g"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+</RelativeLayout>
