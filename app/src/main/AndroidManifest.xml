@@ -12,6 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZenFit">
         <activity
+            android:name=".Themes"
+            android:exported="false" />
+        <activity
+            android:name=".Home"
+            android:exported="false" />
+        <activity
+            android:name=".Menu"
+            android:exported="false" />
+        <activity
+            android:name=".MealLogging"
+            android:exported="false" />
+        <activity
             android:name=".Profile"
             android:exported="false" />
         <activity

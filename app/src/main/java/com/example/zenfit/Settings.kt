@@ -29,6 +29,11 @@ class Settings : AppCompatActivity() {
             val intent = Intent(this, ChangePassword::class.java)
             startActivity(intent)
         }
+        val themesBtn = findViewById<RelativeLayout>(R.id.themeOption)
+        themesBtn.setOnClickListener {
+            val intent = Intent(this, Themes::class.java)
+            startActivity(intent)
+        }
 
     }
 }
