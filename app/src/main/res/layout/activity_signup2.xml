@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/zenfit_background">
+
+    <ImageView
+        android:id="@+id/backArrow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/backarrow"
+        android:contentDescription="Back" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/zenfit_logo" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create an Account"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help us finish setting up your account."
+        android:textColor="@color/light_gray"
+        android:textSize="15sp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/progressSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/subtitle"
+        android:layout_marginTop="30dp"
+        android:paddingHorizontal="25dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/step1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account information"
+            android:textColor="@color/orange"
+            android:textSize="15sp"
+            android:drawableStart="@drawable/iconround1"
+            android:drawablePadding="5dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp" />
+
+        <TextView
+            android:id="@+id/step2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Biodata information"
+            android:textColor="@color/orange"
+            android:textSize="15sp"
+            android:drawableStart="@drawable/iconround2"
+            android:drawablePadding="5dp"
+            android:drawableTint="@color/orange"
+            android:layout_marginEnd="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/progressSection"
+        android:layout_marginTop="30dp"
+        android:paddingHorizontal="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <EditText
+                android:id="@+id/firstNameInput"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:hint="E.g John"
+                android:background="@drawable/input_background"
+                android:textColor="@color/white"
+                android:textColorHint="@color/light_gray"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_marginEnd="10dp" />
+
+            <EditText
+                android:id="@+id/lastNameInput"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:hint="E.g Appleseed"
+                android:background="@drawable/input_background"
+                android:textColor="@color/white"
+                android:textColorHint="@color/light_gray"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/dateOfBirthInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Select Date of Birth"
+            android:background="@drawable/input_background"
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_gray"
+            android:focusable="false"
+            android:clickable="true"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/locationInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Enter your country"
+            android:background="@drawable/input_background"
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_gray"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/cityInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Enter your city"
+            android:background="@drawable/input_background"
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_gray"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/createAccountButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Create your account"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/orange_btn"
+        android:layout_below="@id/inputLayout"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="40dp" />
+
+</RelativeLayout>
