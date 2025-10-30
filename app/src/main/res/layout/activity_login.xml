@@ -109,6 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sign up"
+            android:clickable="true"
             android:textColor="@color/orange"
             android:textStyle="bold" />
     </LinearLayout>

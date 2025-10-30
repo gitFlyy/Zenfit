@@ -1,6 +1,9 @@
 package com.example.zenfit
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +18,21 @@ class Login : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        val login = findViewById<Button>(R.id.loginButton)
+        login.setOnClickListener {
+            val intent = Intent(this, Profile::class.java)
+            startActivity(intent)
+        }
+        val signup = findViewById<TextView>(R.id.signUpText)
+        signup.setOnClickListener {
+            val intent = Intent(this, SignUp::class.java)
+            startActivity(intent)
+        }
+        val forgotPassword = findViewById<TextView>(R.id.forgotPassword)
+        forgotPassword.setOnClickListener {
+            val intent = Intent(this, ForgetPassword::class.java)
+            startActivity(intent)
         }
     }
 }
