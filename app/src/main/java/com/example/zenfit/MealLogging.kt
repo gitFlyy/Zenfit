@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class MealLogging : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var mealAdapter: MealAdapter
+    private lateinit var mealLogAdapter: MealLogAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,7 @@ class MealLogging : AppCompatActivity() {
             Meal("Steak & Potatoes", 680, 42, 52)
         )
 
-        mealAdapter = MealAdapter(meals)
-        recyclerView.adapter = mealAdapter
+        mealLogAdapter = MealLogAdapter(meals)
+        recyclerView.adapter = mealLogAdapter
     }
 }

@@ -7,10 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MealAdapter(private val meals: List<Meal>) :
-    RecyclerView.Adapter<MealAdapter.MealViewHolder>() {
+class MealIdeasAdapter(private val meals: List<Meal>) :
+    RecyclerView.Adapter<MealIdeasAdapter.MealIdeaViewHolder>() {
 
-    class MealViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MealIdeaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mealImage: ImageView = itemView.findViewById(R.id.mealImage)
         val mealName: TextView = itemView.findViewById(R.id.mealName)
         val caloriesValue: TextView = itemView.findViewById(R.id.caloriesValue)
@@ -18,13 +18,13 @@ class MealAdapter(private val meals: List<Meal>) :
         val proteinValue: TextView = itemView.findViewById(R.id.proteinValue)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealIdeaViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_meal_card, parent, false)
-        return MealViewHolder(view)
+            .inflate(R.layout.item_meal_idea, parent, false)
+        return MealIdeaViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: MealViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MealIdeaViewHolder, position: Int) {
         val meal = meals[position]
         holder.mealName.text = meal.name
         holder.caloriesValue.text = "${meal.calories} kcal"
