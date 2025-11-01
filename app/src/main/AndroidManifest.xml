@@ -15,6 +15,9 @@
             android:name=".MealIdeas"
             android:exported="false" />
         <activity
+            android:name=".MealHistory"
+            android:exported="false" />
+        <activity
             android:name=".Themes"
             android:exported="false" />
         <activity
