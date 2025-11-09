@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2C2C2E"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back_arrow"
+                android:tint="@android:color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Create Workout"
+                android:textColor="#B0B0B0"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <!-- Exercise Name Section -->
+        <TextView
+            android:id="@+id/exerciseNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:text="Exercise Name"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editExerciseName"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_below="@id/exerciseNameLabel"
+            android:layout_marginTop="12dp"
+            android:background="#3A3A3A"
+            android:hint="Enter a title for the exercise"
+            android:paddingHorizontal="16dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="#808080"
+            android:textSize="16sp" />
+
+        <!-- Duration Section -->
+        <TextView
+            android:id="@+id/durationLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editExerciseName"
+            android:layout_marginTop="24dp"
+            android:text="Duration"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerDuration"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_below="@id/durationLabel"
+            android:layout_marginTop="12dp"
+            android:background="#3A3A3A"
+            android:paddingHorizontal="16dp"
+            android:popupBackground="#3C3C3E"
+            android:spinnerMode="dropdown" />
+
+        <!-- Reps and Sets Section -->
+        <LinearLayout
+            android:id="@+id/repsSetSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerDuration"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <!-- Reps -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_background2"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/repsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reps:"
+                    android:textColor="#B0B0B0"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/btnRepsUp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_up"
+                    android:tint="#B0B0B0" />
+
+                <TextView
+                    android:id="@+id/repsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/repsLabel"
+                    android:layout_marginTop="8dp"
+                    android:text="7 reps"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnRepsDown"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/btnRepsUp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_down"
+                    android:tint="#B0B0B0" />
+            </RelativeLayout>
+
+            <!-- Sets -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_background2"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/setsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sets:"
+                    android:textColor="#B0B0B0"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/btnSetsUp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_up"
+                    android:tint="#B0B0B0" />
+
+                <TextView
+                    android:id="@+id/setsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/setsLabel"
+                    android:layout_marginTop="8dp"
+                    android:text="10 sets"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnSetsDown"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/btnSetsUp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_down"
+                    android:tint="#B0B0B0" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Weight and Rest Timer Section -->
+        <LinearLayout
+            android:id="@+id/weightRestSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/repsSetSection"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <!-- Weight -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_background2"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/weightLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weight:"
+                    android:textColor="#B0B0B0"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/btnWeightUp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_up"
+                    android:tint="#B0B0B0" />
+
+                <TextView
+                    android:id="@+id/weightValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/weightLabel"
+                    android:layout_marginTop="8dp"
+                    android:text="150 lbs"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnWeightDown"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/btnWeightUp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_down"
+                    android:tint="#B0B0B0" />
+            </RelativeLayout>
+
+            <!-- Rest Timer -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_background2"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/restTimerLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rest timer:"
+                    android:textColor="#B0B0B0"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/btnRestUp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_up"
+                    android:tint="#B0B0B0" />
+
+                <TextView
+                    android:id="@+id/restValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/restTimerLabel"
+                    android:layout_marginTop="8dp"
+                    android:text="80s"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnRestDown"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/btnRestUp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_down"
+                    android:tint="#B0B0B0" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Create Workout Button -->
+        <Button
+            android:id="@+id/btnCreateWorkout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_below="@id/weightRestSection"
+            android:layout_marginTop="40dp"
+            android:backgroundTint="@color/orange"
+            android:text="Create workout"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</ScrollView>
