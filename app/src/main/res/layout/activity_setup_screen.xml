@@ -73,7 +73,7 @@
                 android:src="@drawable/weight" />
 
             <EditText
-                android:id="@+id/weightField"
+                android:id="@+id/weightInput"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/iconWeight"
@@ -118,7 +118,7 @@
                 android:src="@drawable/email" />
 
             <EditText
-                android:id="@+id/heightField"
+                android:id="@+id/heightInput"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/iconHeight"
@@ -155,7 +155,7 @@
                 android:src="@drawable/lock" />
 
             <EditText
-                android:id="@+id/activityField"
+                android:id="@+id/activityInput"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/iconActivity"
