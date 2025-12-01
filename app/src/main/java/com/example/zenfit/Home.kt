@@ -58,8 +58,9 @@ class Home : AppCompatActivity() {
         }
 
         btnMenu.setOnClickListener {
-            // Open menu
-            // TODO: Create menu activity
+            // Navigate to Menu
+            val intent = Intent(this, Menu::class.java)
+            startActivity(intent)
         }
 
         // Bottom navigation listeners
