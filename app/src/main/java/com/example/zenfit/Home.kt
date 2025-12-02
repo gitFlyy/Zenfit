@@ -1,10 +1,13 @@
 package com.example.zenfit
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 
 class Home : AppCompatActivity() {
@@ -30,10 +33,9 @@ class Home : AppCompatActivity() {
         val navCalendar = findViewById<ImageButton>(R.id.navCalendar)
         val navProfile = findViewById<ImageButton>(R.id.navProfile)
 
-        // Click listeners for top cards
         settingsCard.setOnClickListener {
-            // Navigate to Settings
-            // TODO: Create Settings activity
+            val intent = Intent(this, Settings::class.java)
+            startActivity(intent)
         }
 
         moodCard.setOnClickListener {
@@ -58,7 +60,6 @@ class Home : AppCompatActivity() {
         }
 
         btnMenu.setOnClickListener {
-            // Navigate to Menu
             val intent = Intent(this, Menu::class.java)
             startActivity(intent)
         }
@@ -87,5 +88,25 @@ class Home : AppCompatActivity() {
             // Navigate to Profile
             // TODO: Create Profile activity
         }
+    }
+    private fun applyTheme() {
+        try {
+            val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+            val isDarkMode = prefs.getBoolean("isDarkMode", false)
+
+            val rootLayout = findViewById<RelativeLayout>(R.id.main)
+            if (isDarkMode) {
+                rootLayout.setBackgroundResource(R.drawable.zenfit_background)
+            } else {
+                rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 }

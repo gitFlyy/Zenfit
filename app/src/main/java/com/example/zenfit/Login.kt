@@ -1,9 +1,12 @@
 package com.example.zenfit
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -26,7 +29,7 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login_screen)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -118,12 +121,27 @@ class Login : AppCompatActivity() {
 
         requestQueue.add(stringRequest)
     }
-
-
     private fun navigateToHome() {
         val intent = Intent(this, Home::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun applyTheme() {
+        val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("isDarkMode", false)
+
+        val rootLayout = findViewById<RelativeLayout>(R.id.main)
+        if (isDarkMode) {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
+        } else {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 }

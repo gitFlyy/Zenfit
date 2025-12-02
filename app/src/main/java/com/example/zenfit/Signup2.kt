@@ -1,10 +1,12 @@
 package com.example.zenfit
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -138,5 +140,22 @@ class Signup2 : AppCompatActivity() {
         }
 
         requestQueue.add(stringRequest)
+    }
+
+    private fun applyTheme() {
+        val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("isDarkMode", false)
+
+        val rootLayout = findViewById<RelativeLayout>(R.id.main)
+        if (isDarkMode) {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
+        } else {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 }

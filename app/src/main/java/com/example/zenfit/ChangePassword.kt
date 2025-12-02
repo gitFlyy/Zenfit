@@ -6,6 +6,7 @@ import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,7 @@ class ChangePassword : AppCompatActivity() {
     private lateinit var toggleOldPassword: ImageView
     private lateinit var toggleNewPassword: ImageView
     private lateinit var toggleConfirmPassword: ImageView
+    private lateinit var sessionManager: SessionManager
 
     private var isOldPasswordVisible = false
     private var isNewPasswordVisible = false
@@ -34,6 +36,8 @@ class ChangePassword : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
+
+        sessionManager = SessionManager(this)
 
         oldPasswordField = findViewById(R.id.oldPasswordField)
         newPasswordField = findViewById(R.id.newPasswordField)
@@ -107,11 +111,11 @@ class ChangePassword : AppCompatActivity() {
     }
 
     private fun changePassword(oldPassword: String, newPassword: String) {
-        val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val userId = sharedPref.getString("user_id", null)
+        val userId = sessionManager.getUserId()
 
         if (userId == null) {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            finish()
             return
         }
 
@@ -155,5 +159,22 @@ class ChangePassword : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun applyTheme() {
+        val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("isDarkMode", false)
+
+        val rootLayout = findViewById<LinearLayout>(R.id.rootLayout)
+        if (isDarkMode) {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
+        } else {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 }

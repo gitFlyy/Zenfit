@@ -1,7 +1,9 @@
 package com.example.zenfit
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,5 +46,22 @@ class MealLogging : AppCompatActivity() {
 
         mealLogAdapter = MealLogAdapter(meals)
         recyclerView.adapter = mealLogAdapter
+    }
+
+    private fun applyTheme() {
+        val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("isDarkMode", false)
+
+        val rootLayout = findViewById<RelativeLayout>(R.id.main)
+        if (isDarkMode) {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
+        } else {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 }

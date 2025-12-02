@@ -1,10 +1,12 @@
 package com.example.zenfit
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.ImageView
+import android.widget.RelativeLayout
 
 class MealIdeas : AppCompatActivity() {
 
@@ -33,5 +35,22 @@ class MealIdeas : AppCompatActivity() {
 
         mealIdeasAdapter = MealIdeasAdapter(dummyMealIdeas)
         mealIdeasRecyclerView.adapter = mealIdeasAdapter
+    }
+
+    private fun applyTheme() {
+        val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("isDarkMode", false)
+
+        val rootLayout = findViewById<RelativeLayout>(R.id.main)
+        if (isDarkMode) {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
+        } else {
+            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 }
