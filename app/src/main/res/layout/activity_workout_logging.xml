@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/zenfit_background"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:id="@+id/main">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,7 +29,7 @@
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_back_arrow"
-                android:tint="@android:color/white" />
+                app:tint="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -45,8 +46,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_menu_dots"
-                android:tint="@android:color/white" />
+                app:tint="@android:color/white" />
         </RelativeLayout>
 
         <!-- Main Exercise Card -->
@@ -129,7 +129,6 @@
                 android:layout_below="@id/completedSetsValue"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/weight_badge_background"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="6dp"
                 android:text="Weight: 150lbs"
@@ -143,7 +142,6 @@
                 android:layout_below="@id/weightLabel"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/rest_background"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="10dp">
 
@@ -163,8 +161,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_edit"
-                    android:tint="@color/orange" />
+                    app:tint="@color/orange" />
             </RelativeLayout>
         </RelativeLayout>
 
@@ -277,7 +274,6 @@
                         android:id="@+id/btnDecreaseReps"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:background="@drawable/control_button_background"
                         android:text="-"
                         android:textColor="@color/orange"
                         android:textSize="24sp" />
@@ -299,7 +295,6 @@
                         android:id="@+id/btnIncreaseReps"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:background="@drawable/control_button_background"
                         android:text="+"
                         android:textColor="@color/orange"
                         android:textSize="24sp" />
@@ -330,7 +325,6 @@
                         android:id="@+id/btnDecreaseSets"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:background="@drawable/control_button_background"
                         android:text="-"
                         android:textColor="@color/orange"
                         android:textSize="24sp" />
@@ -352,7 +346,6 @@
                         android:id="@+id/btnIncreaseSets"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:background="@drawable/control_button_background"
                         android:text="+"
                         android:textColor="@color/orange"
                         android:textSize="24sp" />
@@ -387,8 +380,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_play_arrow"
-                android:tint="@color/orange" />
+                app:tint="@color/orange" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

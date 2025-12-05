@@ -231,15 +231,13 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <Spinner
-            android:id="@+id/spinnerHoursSlept"
+        <EditText
+            android:id="@+id/HoursSlept"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="12dp"
             android:background="#3A3A3A"
-            android:paddingHorizontal="16dp"
-            android:popupBackground="#3C3C3E"
-            android:spinnerMode="dropdown" />
+            android:paddingHorizontal="16dp" />
 
         <!-- Sleep Quality Section -->
         <TextView
