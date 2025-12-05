@@ -6,19 +6,29 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONObject
 
 class Home : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        sessionManager = SessionManager(this)
+
         // Top cards
         val settingsCard = findViewById<ImageView>(R.id.settingsCard)
         val moodCard = findViewById<ImageView>(R.id.moodCard)
+        loadMoodCard(moodCard)
 
         // Workout buttons
         val btnStartWorkout = findViewById<Button>(R.id.btnStartWorkout)
@@ -39,24 +49,24 @@ class Home : AppCompatActivity() {
         }
 
         moodCard.setOnClickListener {
-            // Navigate to Mood Overview
-            // TODO: Create MoodOverview activity
+            val intent= Intent(this, MoodScreen::class.java)
+            startActivity(intent)
         }
 
         // Workout button listeners
         btnStartWorkout.setOnClickListener {
-            // Start the workout
-            // TODO: Create workout activity
+            val intent = Intent(this, WorkoutLogging::class.java)
+            startActivity(intent)
         }
 
         btnDetails.setOnClickListener {
-            // Show calories details
-            // TODO: Create details activity
+            val intent = Intent(this, CaloriesActivity::class.java)
+            startActivity(intent)
         }
 
         btnStartWorkoutMain.setOnClickListener {
-            // Start a new workout
-            // TODO: Create workout selection activity
+            val intent = Intent(this, WorkoutLogging::class.java)
+            startActivity(intent)
         }
 
         btnMenu.setOnClickListener {
@@ -64,31 +74,70 @@ class Home : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Bottom navigation listeners
-        navHome.setOnClickListener {
-            // Already on home
-        }
-
         navWorkout.setOnClickListener {
-            // Navigate to Workout
-            // TODO: Create Workout activity
+            val intent = Intent(this, WorkoutLogging::class.java)
+            startActivity(intent)
         }
 
         navAdd.setOnClickListener {
-            // Add new workout
-            // TODO: Create add workout activity
+            val intent = Intent(this, CreateWorkout::class.java)
+            startActivity(intent)
         }
 
         navCalendar.setOnClickListener {
-            // Navigate to Calendar
-            // TODO: Create Calendar activity
+            val intent = Intent(this, CalendarActivity::class.java)
+            startActivity(intent)
         }
 
         navProfile.setOnClickListener {
-            // Navigate to Profile
-            // TODO: Create Profile activity
+            val intent = Intent(this, Profile::class.java)
+            startActivity(intent)
         }
     }
+
+    private fun loadMoodCard(moodCard: ImageView) {
+
+        val userId = sessionManager.getUserId()
+        val url = ApiConfig.GET_MOOD_URL
+
+        val request = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                val json = JSONObject(response)
+
+                if (json.getBoolean("success")) {
+                    val mood = json.getString("mood")
+
+                    val imageRes = when (mood) {
+                        "Very Good" -> R.drawable.very_happy
+                        "Good" -> R.drawable.happy
+                        "Fine" -> R.drawable.neutral
+                        "Bad" -> R.drawable.sad
+                        "Very Bad" -> R.drawable.very_sad
+                        else -> R.drawable.neutral
+                    }
+
+                    moodCard.setImageResource(imageRes)
+                    moodCard.setColorFilter(
+                        ContextCompat.getColor(this, android.R.color.white),
+                        android.graphics.PorterDuff.Mode.SRC_IN
+                    )
+                }
+            },
+            {
+                Toast.makeText(this, "Failed loading mood", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["user_id"] = userId!!
+                return params
+            }
+        }
+
+        Volley.newRequestQueue(this).add(request)
+    }
+
     private fun applyTheme() {
         try {
             val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
@@ -108,5 +157,10 @@ class Home : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         applyTheme()
+        val moodCard = findViewById<ImageView>(R.id.moodCard)
+        loadMoodCard(moodCard)
+        val welcomeText = findViewById<TextView>(R.id.welcomeText)
+        val username = sessionManager.prefs.getString(SessionManager.KEY_USERNAME, "User")
+        welcomeText.text = "Welcome back, $username!"
     }
 }

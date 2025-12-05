@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
@@ -38,6 +39,7 @@ class Signup2 : AppCompatActivity() {
         val username = intent.getStringExtra("username") ?: ""
         val email = intent.getStringExtra("email") ?: ""
         val password = intent.getStringExtra("password") ?: ""
+        val profileImage = intent.getStringExtra("profile_image")
 
         val firstNameInput = findViewById<EditText>(R.id.firstNameInput)
         val lastNameInput = findViewById<EditText>(R.id.lastNameInput)
@@ -77,7 +79,7 @@ class Signup2 : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            performSignup(username, email, password, firstName, lastName, dateOfBirth, location, city)
+            performSignup(username, email, password, firstName, lastName, dateOfBirth, location, city, profileImage)
         }
     }
 
@@ -89,13 +91,15 @@ class Signup2 : AppCompatActivity() {
         lastName: String,
         dateOfBirth: String,
         location: String,
-        city: String
+        city: String,
+        profileImage: String?
     ) {
         val requestQueue = Volley.newRequestQueue(this)
         val stringRequest = object : StringRequest(
             Request.Method.POST,
             ApiConfig.SIGNUP_URL,
             { response ->
+                Log.d("Signup2", "Server Response: $response")
                 try {
                     val jsonResponse = JSONObject(response)
                     val statusCode = jsonResponse.getInt("statuscode")
@@ -108,21 +112,25 @@ class Signup2 : AppCompatActivity() {
                             userData.getString("email"),
                             "$firstName $lastName"
                         )
-                        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_LONG).show()
                         val intent = Intent(this, SetupScreen::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         finish()
                     } else {
                         val message = jsonResponse.getString("message")
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                        Log.e("Signup2", "Error: $message")
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("Signup2", "Parse Error: ${e.message}", e)
+                    Toast.makeText(this, "Server response error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             },
             { error ->
-                Toast.makeText(this, "Connection error: ${error.message}", Toast.LENGTH_SHORT).show()
+                val errorMsg = error.message ?: "Unknown error"
+                Log.e("Signup2", "Network Error: $errorMsg", error)
+                Toast.makeText(this, "Connection error: $errorMsg", Toast.LENGTH_LONG).show()
             }
         ) {
             override fun getParams(): Map<String, String> {
@@ -135,6 +143,11 @@ class Signup2 : AppCompatActivity() {
                 params["date_of_birth"] = dateOfBirth
                 params["location"] = location
                 params["city"] = city
+                if (!profileImage.isNullOrEmpty()) {
+                    params["profile_image"] = profileImage
+                    Log.d("Signup2", "Profile image size: ${profileImage.length} characters")
+                }
+                Log.d("Signup2", "Sending signup request with params: username=$username, email=$email")
                 return params
             }
         }
