@@ -1,9 +1,9 @@
 package com.example.zenfit
 
 object ApiConfig {
-    private const val BASE_URL = "http://192.168.18.12/zenfit/"
+    private const val BASE_URL = "http://192.168.10.14/zenfit/"
     const val LOGIN_URL = "${BASE_URL}login.php"
-    const val SIGNUP_URL = "${BASE_URL}login.php"
+    const val SIGNUP_URL = "${BASE_URL}signup.php"
     const val FORGOT_PASSWORD_URL = "${BASE_URL}forgot_password.php"
     const val RESET_PASSWORD_URL = "${BASE_URL}reset_password.php"
     const val CHANGE_PASSWORD_URL = "${BASE_URL}change_password.php"
@@ -11,4 +11,12 @@ object ApiConfig {
     const val UPDATE_ACCOUNT_URL = "${BASE_URL}update_account.php"
     const val DELETE_ACCOUNT_URL = "${BASE_URL}delete_account.php"
     const val UPDATE_PROFILE_URL = "${BASE_URL}update_account.php"
+    const val GET_PROFILE_URL = "${BASE_URL}get_profile.php"
+    const val GET_USER_POSTS_URL = "${BASE_URL}get_user_posts.php"
+    const val UPDATE_MOOD_URL = "${BASE_URL}update_mood.php"
+    const val GET_MOOD_URL = "${BASE_URL}get_mood.php"
+    const val UPLOAD_MEAL_URL = "${BASE_URL}upload_meal.php"
+    const val GET_MEALS_URL = "${BASE_URL}get_meals.php"
+    const val GET_MEALS_BY_DATE_URL = "${BASE_URL}get_meals_by_date.php"
+    const val GET_MEAL_IDEAS_URL = "${BASE_URL}get_meal_ideas.php"
 }
