@@ -80,7 +80,7 @@ class Home : AppCompatActivity() {
         }
 
         navAdd.setOnClickListener {
-            val intent = Intent(this, CreateWorkout::class.java)
+            val intent = Intent(this, UploadPost::class.java)
             startActivity(intent)
         }
 

@@ -101,6 +101,8 @@
             android:exported="false"/>
         <activity android:name=".CreateWorkout"
             android:exported="false"/>
+        <activity android:name=".UploadPost"
+            android:exported="false"/>
 
         <activity
             android:name=".SplashScreen"

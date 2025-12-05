@@ -19,4 +19,5 @@ object ApiConfig {
     const val GET_MEALS_URL = "${BASE_URL}get_meals.php"
     const val GET_MEALS_BY_DATE_URL = "${BASE_URL}get_meals_by_date.php"
     const val GET_MEAL_IDEAS_URL = "${BASE_URL}get_meal_ideas.php"
+    const val UPLOAD_POST_URL = "${BASE_URL}upload_post.php"
 }
