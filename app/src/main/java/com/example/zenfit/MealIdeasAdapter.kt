@@ -1,5 +1,7 @@
 package com.example.zenfit
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +32,20 @@ class MealIdeasAdapter(private val meals: List<Meal>) :
         holder.caloriesValue.text = "${meal.calories} kcal"
         holder.carbsValue.text = "${meal.carbs}g"
         holder.proteinValue.text = "${meal.protein}g"
-        holder.mealImage.setImageResource(meal.imageResId)
+
+        // If server returns base64 image, decode and set; otherwise use placeholder
+        if (!meal.imageUrl.isNullOrEmpty()) {
+            try {
+                val decoded = Base64.decode(meal.imageUrl, Base64.DEFAULT)
+                val bmp = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+                holder.mealImage.setImageBitmap(bmp)
+            } catch (e: Exception) {
+                // fallback to placeholder
+                holder.mealImage.setImageResource(R.drawable.meal_placeholder)
+            }
+        } else {
+            holder.mealImage.setImageResource(R.drawable.meal_placeholder)
+        }
     }
 
     override fun getItemCount() = meals.size

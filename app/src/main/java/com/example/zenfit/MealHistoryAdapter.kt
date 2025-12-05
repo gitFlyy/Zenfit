@@ -1,5 +1,7 @@
 package com.example.zenfit
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +23,7 @@ class MealHistoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_meal_card, parent, false)
+            .inflate(R.layout.item_meal_history, parent, false)
         return MealViewHolder(view)
     }
 
@@ -29,8 +31,23 @@ class MealHistoryAdapter(
         val meal = meals[position]
         holder.mealName.text = meal.name
         holder.caloriesValue.text = "${meal.calories} kcal"
-        holder.carbsValue.text = "${meal.carbs}g"
-        holder.proteinValue.text = "${meal.protein}g"
+        holder.carbsValue.text = meal.carbs
+        holder.proteinValue.text = meal.protein
+
+        // Decode base64 image or use placeholder
+        if (!meal.imageUrl.isNullOrEmpty()) {
+            try {
+                val imageBytes = Base64.decode(meal.imageUrl, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                holder.mealImage.setImageBitmap(bitmap)
+                holder.mealImage.scaleType = ImageView.ScaleType.CENTER_CROP
+            } catch (e: Exception) {
+                e.printStackTrace()
+                holder.mealImage.setImageResource(R.drawable.meal_placeholder)
+            }
+        } else {
+            holder.mealImage.setImageResource(R.drawable.meal_placeholder)
+        }
     }
 
     override fun getItemCount() = meals.size
