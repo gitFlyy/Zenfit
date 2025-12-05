@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/card_background2"
+    android:padding="16dp">
+
+    <!-- Meal Image (Top, Large) -->
+    <ImageView
+        android:id="@+id/mealImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/meal_placeholder"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Meal Name (Below Image) -->
+    <TextView
+        android:id="@+id/mealName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mealImage"
+        android:layout_marginTop="8dp"
+        android:text="Meal Name"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Nutritional Info Container -->
+    <LinearLayout
+        android:id="@+id/nutritionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mealName"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <!-- Calories Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/calories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calories"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/caloriesValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="450 kcal"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Carbs Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/carbs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carbs"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/carbsValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="45g"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Protein Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/protein"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Protein"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/proteinValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="35g"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+
