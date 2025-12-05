@@ -1,6 +1,7 @@
 package com.example.zenfit
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -23,42 +24,50 @@ class Menu : AppCompatActivity() {
 
         // Meal Logging
         findViewById<ImageView>(R.id.btnMealLogging).setOnClickListener {
-            // TODO: Navigate to Meal Logging
+            val intent= Intent(this, MealLogging::class.java)
+            startActivity(intent)
         }
 
         // Meal Photo
         findViewById<ImageView>(R.id.btnMealPhoto).setOnClickListener {
-            // TODO: Navigate to Meal Photo
+            val intent= Intent(this, MealUpload::class.java)
+            startActivity(intent)
         }
 
         // Food Library
         findViewById<ImageView>(R.id.btnFoodLibrary).setOnClickListener {
-            // TODO: Navigate to Food Library
+            val intent= Intent(this, MealIdeas::class.java)
+            startActivity(intent)
         }
 
         // Meal History
         findViewById<ImageView>(R.id.btnMealHistory).setOnClickListener {
-            // TODO: Navigate to Meal History
+            val intent= Intent(this, MealHistory::class.java)
+            startActivity(intent)
         }
 
         // Workout Library
         findViewById<ImageView>(R.id.btnWorkoutLibrary).setOnClickListener {
-            // TODO: Navigate to Workout Library
+            val intent= Intent(this, WorkoutLibrary::class.java)
+            startActivity(intent)
         }
 
         // Workout History
         findViewById<ImageView>(R.id.btnWorkoutHistory).setOnClickListener {
-            // TODO: Navigate to Workout History
+            val intent= Intent(this, WorkoutHistory::class.java)
+            startActivity(intent)
         }
 
         // Create Workout
         findViewById<ImageView>(R.id.btnCreateWorkout).setOnClickListener {
-            // TODO: Navigate to Create Workout
+            val intent= Intent(this, CreateWorkout::class.java)
+            startActivity(intent)
         }
 
         // Notifications
         findViewById<ImageView>(R.id.btnNotifications).setOnClickListener {
-            // TODO: Navigate to Notifications
+            val intent= Intent(this, NotificationsActivity::class.java)
+            startActivity(intent)
         }
     }
 
