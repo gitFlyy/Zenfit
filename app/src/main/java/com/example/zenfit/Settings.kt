@@ -22,11 +22,17 @@ class Settings : AppCompatActivity() {
         val backBtn = findViewById<ImageView>(R.id.backBtn)
         val accountOption = findViewById<RelativeLayout>(R.id.account)
         val changePasswordOption = findViewById<RelativeLayout>(R.id.changePasswordOption)
+        val notifications = findViewById<RelativeLayout>(R.id.notificationsOption)
         val themeOption = findViewById<RelativeLayout>(R.id.themeOption)
         val logoutOption = findViewById<RelativeLayout>(R.id.logoutOption)
 
         backBtn.setOnClickListener {
             finish()
+        }
+
+        notifications.setOnClickListener {
+            val intent = Intent(this, NotificationsActivity::class.java)
+            startActivity(intent)
         }
 
         accountOption.setOnClickListener {
