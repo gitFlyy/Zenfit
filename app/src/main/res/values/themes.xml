@@ -1,9 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Base application theme (light) -->
     <style name="Base.Theme.ZenFit" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Add light theme colors here if needed -->
     </style>
 
     <style name="Theme.ZenFit" parent="Base.Theme.ZenFit" />
+
+    <!-- Calendar Light Theme -->
+    <style name="CalendarViewStyle" parent="android:Widget.Material.CalendarView">
+        <item name="android:dateTextAppearance">@style/CalendarDateTextAppearance</item>
+        <item name="android:weekDayTextAppearance">@style/CalendarWeekDayTextAppearance</item>
+    </style>
+
+    <style name="CalendarDateTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#000000</item> <!-- Black dates -->
+    </style>
+
+    <style name="CalendarWeekDayTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#444444</item> <!-- Dark gray weekdays -->
+    </style>
+
 </resources>

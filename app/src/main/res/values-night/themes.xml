@@ -1,7 +1,24 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ZenFit" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<resources>
+
+    <!-- Base theme for dark mode -->
+    <style name="Base.Theme.ZenFit" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Dark mode colors here -->
     </style>
+
+    <style name="Theme.ZenFit" parent="Base.Theme.ZenFit" />
+
+    <!-- Calendar Dark Theme -->
+    <style name="CalendarViewStyle" parent="android:Widget.Material.CalendarView">
+        <item name="android:dateTextAppearance">@style/CalendarDateTextAppearance</item>
+        <item name="android:weekDayTextAppearance">@style/CalendarWeekDayTextAppearance</item>
+    </style>
+
+    <style name="CalendarDateTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FFFFFF</item> <!-- WHITE dates -->
+    </style>
+
+    <style name="CalendarWeekDayTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#DDDDDD</item> <!-- Light gray weekdays -->
+    </style>
+
 </resources>
