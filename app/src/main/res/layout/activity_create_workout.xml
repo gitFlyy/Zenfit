@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#2C2C2E"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:id="@+id/main">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,7 +28,7 @@
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_back_arrow"
-                android:tint="@android:color/white" />
+                app:tint="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -118,8 +119,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_up"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
 
                 <TextView
                     android:id="@+id/repsValue"
@@ -139,8 +139,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnRepsUp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_down"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
             </RelativeLayout>
 
             <!-- Sets -->
@@ -166,8 +165,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_up"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
 
                 <TextView
                     android:id="@+id/setsValue"
@@ -187,8 +185,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnSetsUp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_down"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -225,8 +222,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_up"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
 
                 <TextView
                     android:id="@+id/weightValue"
@@ -246,8 +242,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnWeightUp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_down"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
             </RelativeLayout>
 
             <!-- Rest Timer -->
@@ -273,8 +268,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_up"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
 
                 <TextView
                     android:id="@+id/restValue"
@@ -294,8 +288,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnRestUp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_down"
-                    android:tint="#B0B0B0" />
+                    app:tint="#B0B0B0" />
             </RelativeLayout>
         </LinearLayout>
 
