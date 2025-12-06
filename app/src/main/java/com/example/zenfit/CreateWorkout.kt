@@ -1,15 +1,27 @@
 package com.example.zenfit
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ScrollView
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
-import kotlin.toString
 
 class CreateWorkout : AppCompatActivity() {
 
@@ -25,10 +37,18 @@ class CreateWorkout : AppCompatActivity() {
         setContentView(R.layout.activity_create_workout)
 
         sessionManager = SessionManager(this)
-
+        queueManager = WorkoutQueueManager(this)
         setupViews()
         setupListeners()
         applyTheme()
+
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkReceiver, filter)
+
+        // Upload any queued workouts if online
+        if (isNetworkAvailable()) {
+            uploadQueuedWorkouts()
+        }
     }
 
     private fun setupViews() {
@@ -64,7 +84,14 @@ class CreateWorkout : AppCompatActivity() {
     }
 
 
-
+    private lateinit var queueManager: WorkoutQueueManager
+    private val networkReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (isNetworkAvailable()) {
+                uploadQueuedWorkouts()
+            }
+        }
+    }
     private fun setupListeners() {
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
@@ -151,6 +178,37 @@ class CreateWorkout : AppCompatActivity() {
         }
 
         val userId = sessionManager.getUserId() ?: ""
+
+        if (!isNetworkAvailable()) {
+            // Queue workout for later upload
+            val queuedWorkout = QueuedWorkout(
+                id = System.currentTimeMillis(),
+                userId = userId,
+                name = name,
+                duration = duration,
+                reps = reps,
+                sets = sets,
+                weight = weight,
+                restTime = restTime,
+                timestamp = System.currentTimeMillis()
+            )
+            queueManager.addToQueue(queuedWorkout)
+            Toast.makeText(this, "No internet. Workout queued for upload.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
+        uploadWorkout(userId, name, duration, reps, sets, weight, restTime)
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    private fun uploadWorkout(userId: String, name: String, duration: Int, reps: Int, sets: Int, weight: Int, restTime: Int) {
         val url = ApiConfig.CREATE_WORKOUT_URL
 
         val request = object : StringRequest(
@@ -186,6 +244,53 @@ class CreateWorkout : AppCompatActivity() {
         }
 
         Volley.newRequestQueue(this).add(request)
+    }
+
+    private fun uploadQueuedWorkouts() {
+        val queue = queueManager.getQueue()
+        if (queue.isEmpty()) return
+
+        Toast.makeText(this, "Uploading ${queue.size} queued workout(s)...", Toast.LENGTH_SHORT).show()
+
+        queue.forEach { workout ->
+            val url = ApiConfig.CREATE_WORKOUT_URL
+
+            val request = object : StringRequest(
+                Request.Method.POST, url,
+                { response ->
+                    try {
+                        val json = JSONObject(response)
+                        if (json.getBoolean("success")) {
+                            queueManager.removeFromQueue(workout.id)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                },
+                { error ->
+                    error.printStackTrace()
+                }
+            ) {
+                override fun getParams(): MutableMap<String, String> {
+                    val params = HashMap<String, String>()
+                    params["user_id"] = workout.userId
+                    params["name"] = workout.name
+                    params["duration"] = workout.duration.toString()
+                    params["reps"] = workout.reps.toString()
+                    params["sets"] = workout.sets.toString()
+                    params["weight"] = workout.weight.toString()
+                    params["rest_time"] = workout.restTime.toString()
+                    return params
+                }
+            }
+
+            Volley.newRequestQueue(this).add(request)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(networkReceiver)
     }
 
 
