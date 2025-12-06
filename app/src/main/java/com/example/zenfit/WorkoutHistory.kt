@@ -1,5 +1,8 @@
 package com.example.zenfit
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,8 +20,6 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
-import kotlin.printStackTrace
-import kotlin.text.clear
 
 class WorkoutHistory : AppCompatActivity() {
 
@@ -29,12 +30,14 @@ class WorkoutHistory : AppCompatActivity() {
     private lateinit var btnDelete: ImageButton
     private lateinit var historyAdapter: WorkoutHistoryAdapter
     private val historyList = mutableListOf<WorkoutHistoryItem>()
+    private lateinit var cacheManager: CacheManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_history)
 
         sessionManager = SessionManager(this)
+        cacheManager = CacheManager(this)
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
@@ -47,8 +50,34 @@ class WorkoutHistory : AppCompatActivity() {
         setupRecyclerView()
         setupSearchBar()
         setupDeleteButton()
-        fetchWorkoutHistory()
+        loadCachedHistory()
+
+        // Then try to fetch fresh data if online
+        if (isNetworkAvailable()) {
+            fetchWorkoutHistory()
+        } else {
+            Toast.makeText(this, "Offline mode - showing cached data", Toast.LENGTH_SHORT).show()
+        }
+
         applyTheme()
+    }
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    // Add method to load cached history
+    private fun loadCachedHistory() {
+        val cachedHistory = cacheManager.getCachedWorkoutHistory()
+        if (cachedHistory.isNotEmpty()) {
+            historyList.clear()
+            historyList.addAll(cachedHistory)
+            historyAdapter.updateWorkouts(historyList)
+            emptyState.visibility = View.GONE
+            workoutHistoryRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     private fun setupRecyclerView() {
@@ -142,7 +171,6 @@ class WorkoutHistory : AppCompatActivity() {
                     try {
                         val json = JSONObject(response)
                         if (json.getBoolean("success")) {
-                            // Changed from "workouts" to "history" to match get_workout_history.php
                             val workoutsArray = json.getJSONArray("history")
                             historyList.clear()
 
@@ -163,6 +191,8 @@ class WorkoutHistory : AppCompatActivity() {
                                 )
                             }
 
+                            // Cache the history
+                            cacheManager.cacheWorkoutHistory(historyList)
                             historyAdapter.updateWorkouts(historyList)
 
                             if (historyList.isEmpty()) {
@@ -187,9 +217,7 @@ class WorkoutHistory : AppCompatActivity() {
             },
             { error ->
                 error.printStackTrace()
-                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
-                emptyState.visibility = View.VISIBLE
-                workoutHistoryRecyclerView.visibility = View.GONE
+                Toast.makeText(this, "Using cached data", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams() = hashMapOf("user_id" to userId)

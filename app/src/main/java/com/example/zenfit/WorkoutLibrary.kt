@@ -2,6 +2,8 @@ package com.example.zenfit
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,12 +27,14 @@ class WorkoutLibrary : AppCompatActivity() {
     private lateinit var btnDelete: ImageButton
     private lateinit var workoutAdapter: WorkoutLibraryAdapter
     private val allWorkouts = mutableListOf<Workout>()
+    private lateinit var cacheManager: CacheManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_library)
 
         sessionManager = SessionManager(this)
+        cacheManager = CacheManager(this)
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
@@ -53,10 +57,32 @@ class WorkoutLibrary : AppCompatActivity() {
         setupSearchBox()
         setupDeleteButton()
         setupBackPress()
-        fetchWorkouts()
+
+        loadCachedWorkouts()
+        if (isNetworkAvailable()) {
+            fetchWorkouts()
+        } else {
+            Toast.makeText(this, "Offline mode - showing cached data", Toast.LENGTH_SHORT).show()
+        }
+
         applyTheme()
     }
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 
+    // Add method to load cached workouts
+    private fun loadCachedWorkouts() {
+        val cachedWorkouts = cacheManager.getCachedWorkouts()
+        if (cachedWorkouts.isNotEmpty()) {
+            allWorkouts.clear()
+            allWorkouts.addAll(cachedWorkouts)
+            workoutAdapter.updateWorkouts(allWorkouts)
+        }
+    }
     private fun setupRecyclerView() {
         workoutAdapter = WorkoutLibraryAdapter(
             allWorkouts,
@@ -171,6 +197,8 @@ class WorkoutLibrary : AppCompatActivity() {
                             )
                         }
 
+                        // Cache the workouts
+                        cacheManager.cacheWorkouts(allWorkouts)
                         workoutAdapter.updateWorkouts(allWorkouts)
                     }
                 } catch (e: Exception) {
@@ -178,7 +206,8 @@ class WorkoutLibrary : AppCompatActivity() {
                 }
             },
             { error ->
-                Toast.makeText(this, "Failed to fetch workouts: ${error.message}", Toast.LENGTH_SHORT).show()
+                // On network error, use cached data
+                Toast.makeText(this, "Using cached data", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams() = hashMapOf("user_id" to userId)
