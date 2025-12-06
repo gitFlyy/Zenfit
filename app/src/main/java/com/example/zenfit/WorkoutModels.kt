@@ -13,6 +13,7 @@ data class Exercise(
     val duration: Int = 0 // in minutes
 )
 data class Workout(
+    val id: Int = 0,
     val name: String,
     val duration: Int,
     val reps: Int,
@@ -20,4 +21,15 @@ data class Workout(
     val weight: Int = 150,
     val restTime: Int = 60,
     val exerciseCount: Int = 1
+)
+
+data class WorkoutHistoryItem(
+    val id: Int,
+    val exerciseName: String,
+    val reps: Int,
+    val sets: Int,
+    val weight: Int,
+    val duration: Int,
+    val restTime: Int,
+    val completedDate: Long
 )

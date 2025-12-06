@@ -25,5 +25,9 @@ object ApiConfig {
     const val UPDATE_EXERCISE_URL = "${BASE_URL}update_exercise.php"
     const val CREATE_WORKOUT_URL = "${BASE_URL}create_workout.php"
     const val GET_WORKOUTS_URL = "${BASE_URL}get_workouts.php"
+    const val SAVE_WORKOUT_HISTORY_URL = "$BASE_URL/save_workout_history.php"
+    const val GET_WORKOUT_HISTORY_URL = "${BASE_URL}get_workout_history.php"
+    const val DELETE_WORKOUT_HISTORY_URL = "${BASE_URL}delete_workout_history.php"
+    const val DELETE_WORKOUT_URL = "${BASE_URL}delete_workout.php"
 
 }

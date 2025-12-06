@@ -517,6 +517,7 @@ class WorkoutLogging : AppCompatActivity() {
             startRestTimer()
         } else {
             // All sets completed
+            saveToWorkoutHistory(current)
             isTimerRunning = false
             isWorkoutRunning = false
             btnPlayPause.setImageResource(R.drawable.play)
@@ -524,6 +525,61 @@ class WorkoutLogging : AppCompatActivity() {
         }
     }
 
+    private fun saveToWorkoutHistory(exercise: Exercise) {
+        val userId = sessionManager.getUserId() ?: ""
+        val url = ApiConfig.SAVE_WORKOUT_HISTORY_URL
+
+        val request = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getBoolean("success")) {
+                        Toast.makeText(this, "Exercise completed! Saved to history", Toast.LENGTH_SHORT).show()
+
+                        // Remove completed exercise from current list
+                        exercises.removeAt(currentExerciseIndex)
+
+                        if (exercises.isEmpty()) {
+                            Toast.makeText(this, "All exercises completed!", Toast.LENGTH_LONG).show()
+                            finish() // Close activity
+                        } else {
+                            // Adjust index if needed
+                            if (currentExerciseIndex >= exercises.size) {
+                                currentExerciseIndex = exercises.size - 1
+                            }
+                            updateUI()
+                            resetTimer()
+                        }
+                    } else {
+                        Toast.makeText(this, "Failed to save to history", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Error saving to history: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { error ->
+                error.printStackTrace()
+                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                return hashMapOf(
+                    "user_id" to userId,
+                    "exercise_name" to exercise.name,
+                    "reps" to exercise.reps.toString(),
+                    "sets" to (exercise.completedSets + 1).toString(), // Total sets completed
+                    "weight" to exercise.weight.toString(),
+                    "duration" to exercise.duration.toString(),
+                    "rest_time" to exercise.restTime.toString(),
+                    "completed_date" to System.currentTimeMillis().toString()
+                )
+            }
+        }
+
+        Volley.newRequestQueue(this).add(request)
+    }
 
 
     private fun startRestTimer() {

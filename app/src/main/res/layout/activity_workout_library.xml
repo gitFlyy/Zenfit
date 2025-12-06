@@ -38,6 +38,17 @@
                 android:text="Workout Library"
                 android:textColor="#B0B0B0"
                 android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_delete"
+                android:tint="@android:color/white"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- Search Box -->

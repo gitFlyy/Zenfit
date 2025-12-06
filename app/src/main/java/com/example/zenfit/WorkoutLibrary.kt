@@ -5,21 +5,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
-import kotlin.text.clear
 
 class WorkoutLibrary : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
     private lateinit var searchBox: EditText
-    private lateinit var workoutCardsContainer: LinearLayout
+    private lateinit var workoutRecyclerView: RecyclerView
+    private lateinit var btnDelete: ImageButton
+    private lateinit var workoutAdapter: WorkoutLibraryAdapter
     private val allWorkouts = mutableListOf<Workout>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,21 +35,111 @@ class WorkoutLibrary : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
         searchBox = findViewById(R.id.searchBox)
-        workoutCardsContainer = findViewById(R.id.workoutCardsContainer)
+        btnDelete = findViewById(R.id.btnDelete)
 
+        // Convert LinearLayout to RecyclerView in layout
+        val workoutCardsContainer = findViewById<LinearLayout>(R.id.workoutCardsContainer)
+        workoutCardsContainer.removeAllViews()
+
+        workoutRecyclerView = RecyclerView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+        workoutCardsContainer.addView(workoutRecyclerView)
+
+        setupRecyclerView()
         setupSearchBox()
+        setupDeleteButton()
+        setupBackPress()
         fetchWorkouts()
         applyTheme()
+    }
+
+    private fun setupRecyclerView() {
+        workoutAdapter = WorkoutLibraryAdapter(
+            allWorkouts,
+            onWorkoutClick = { workout -> openWorkoutLogging(workout) },
+            onSelectionChanged = { selectedIds ->
+                btnDelete.visibility = if (selectedIds.isNotEmpty()) View.VISIBLE else View.GONE
+            }
+        )
+        workoutRecyclerView.adapter = workoutAdapter
+        workoutRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun setupSearchBox() {
         searchBox.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterWorkouts(s.toString())
+                workoutAdapter.filter(s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    private fun setupDeleteButton() {
+        btnDelete.setOnClickListener {
+            val selectedIds = workoutAdapter.getSelectedIds()
+            if (selectedIds.isEmpty()) {
+                Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            AlertDialog.Builder(this)
+                .setTitle("Delete Workouts")
+                .setMessage("Are you sure you want to delete ${selectedIds.size} workout(s)?")
+                .setPositiveButton("Delete") { _, _ ->
+                    deleteSelectedWorkouts(selectedIds)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+    }
+
+    private fun setupBackPress() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (workoutAdapter.isSelectionMode) {
+                    workoutAdapter.clearSelection()
+                    btnDelete.visibility = View.GONE
+                } else {
+                    finish()
+                }
+            }
+        })
+    }
+
+    private fun deleteSelectedWorkouts(ids: List<Int>) {
+        val url = ApiConfig.DELETE_WORKOUT_URL
+        val idsString = ids.joinToString(",")
+
+        val request = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getBoolean("success")) {
+                        Toast.makeText(this, "Deleted successfully", Toast.LENGTH_SHORT).show()
+                        workoutAdapter.clearSelection()
+                        btnDelete.visibility = View.GONE
+                        fetchWorkouts()
+                    } else {
+                        Toast.makeText(this, "Failed to delete", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { error ->
+                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams() = hashMapOf("ids" to idsString)
+        }
+
+        Volley.newRequestQueue(this).add(request)
     }
 
     private fun fetchWorkouts() {
@@ -65,6 +159,7 @@ class WorkoutLibrary : AppCompatActivity() {
                             val obj = workoutsArray.getJSONObject(i)
                             allWorkouts.add(
                                 Workout(
+                                    id = obj.getInt("id"),
                                     name = obj.getString("name"),
                                     duration = obj.getInt("duration"),
                                     reps = obj.getInt("reps"),
@@ -76,7 +171,7 @@ class WorkoutLibrary : AppCompatActivity() {
                             )
                         }
 
-                        displayWorkouts(allWorkouts)
+                        workoutAdapter.updateWorkouts(allWorkouts)
                     }
                 } catch (e: Exception) {
                     Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -92,46 +187,6 @@ class WorkoutLibrary : AppCompatActivity() {
         Volley.newRequestQueue(this).add(request)
     }
 
-
-    private fun displayWorkouts(workouts: List<Workout>) {
-        workoutCardsContainer.removeAllViews()
-
-        workouts.forEach { workout ->
-            val cardView = LayoutInflater.from(this).inflate(R.layout.item_workout_card, workoutCardsContainer, false) as RelativeLayout
-
-            // Convert seconds to display format
-            val durationText = formatDuration(workout.duration)
-
-            cardView.findViewById<TextView>(R.id.workoutName).text = workout.name
-            cardView.findViewById<TextView>(R.id.durationText).text = "Duration:\n$durationText"
-            cardView.findViewById<TextView>(R.id.repsText).text = "Reps:\n${workout.reps}"
-            cardView.findViewById<TextView>(R.id.setsText).text = "Sets:\n${workout.sets}"
-
-            cardView.setOnClickListener { openWorkoutLogging(workout) }
-            workoutCardsContainer.addView(cardView)
-        }
-    }
-
-    private fun formatDuration(totalSeconds: Int): String {
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        return when {
-            minutes == 0 -> "${seconds}s"
-            seconds == 0 -> "${minutes}min"
-            else -> "${minutes}min ${seconds}s"
-        }
-    }
-
-
-    private fun filterWorkouts(query: String) {
-        val filtered = if (query.isEmpty()) {
-            allWorkouts
-        } else {
-            allWorkouts.filter { it.name.contains(query, ignoreCase = true) }
-        }
-        displayWorkouts(filtered)
-    }
-
     private fun openWorkoutLogging(workout: Workout) {
         val intent = Intent(this, WorkoutLogging::class.java).apply {
             putExtra("workout_name", workout.name)
@@ -144,7 +199,6 @@ class WorkoutLibrary : AppCompatActivity() {
         }
         startActivity(intent)
     }
-
 
     private fun applyTheme() {
         val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)

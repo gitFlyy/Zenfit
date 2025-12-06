@@ -1,85 +1,228 @@
 package com.example.zenfit
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.ScrollView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONObject
 
 class WorkoutHistory : AppCompatActivity() {
 
-    private lateinit var searchBox: EditText
-    private lateinit var workoutCardsContainer: LinearLayout
-    private val workoutCards = mutableListOf<Pair<android.widget.RelativeLayout, String>>()
+    private lateinit var sessionManager: SessionManager
+    private lateinit var workoutHistoryRecyclerView: RecyclerView
+    private lateinit var emptyState: TextView
+    private lateinit var searchBar: EditText
+    private lateinit var btnDelete: ImageButton
+    private lateinit var historyAdapter: WorkoutHistoryAdapter
+    private val historyList = mutableListOf<WorkoutHistoryItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_history)
 
+        sessionManager = SessionManager(this)
+
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
-        searchBox = findViewById(R.id.searchBox)
-        workoutCardsContainer = findViewById(R.id.workoutCardsContainer)
+        workoutHistoryRecyclerView = findViewById(R.id.workoutHistoryRecyclerView)
+        emptyState = findViewById(R.id.emptyState)
+        searchBar = findViewById(R.id.searchBar)
+        btnDelete = findViewById(R.id.btnDelete)
 
-        setupWorkoutCards()
-        setupSearchBox()
+        setupRecyclerView()
+        setupSearchBar()
+        setupDeleteButton()
+        fetchWorkoutHistory()
         applyTheme()
     }
 
-    private fun setupWorkoutCards() {
-        // Store references to all workout cards with their names
-        workoutCards.add(Pair(findViewById(R.id.workoutCard1), "Push ups"))
-        workoutCards.add(Pair(findViewById(R.id.workoutCard2), "Squats"))
-        workoutCards.add(Pair(findViewById(R.id.workoutCard3), "Pull ups"))
-        workoutCards.add(Pair(findViewById(R.id.workoutCard4), "Weight Lifting"))
-        workoutCards.add(Pair(findViewById(R.id.workoutCard5), "Sprints"))
-        workoutCards.add(Pair(findViewById(R.id.workoutCard6), "Deadlifts"))
+    private fun setupRecyclerView() {
+        historyAdapter = WorkoutHistoryAdapter(historyList) { selectedIds ->
+            btnDelete.visibility = if (selectedIds.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+        workoutHistoryRecyclerView.adapter = historyAdapter
+        workoutHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun setupSearchBox() {
-        searchBox.addTextChangedListener(object : TextWatcher {
+    private fun setupSearchBar() {
+        searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterWorkouts(s.toString())
+                historyAdapter.filter(s.toString())
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun filterWorkouts(query: String) {
-        for ((card, workoutName) in workoutCards) {
-            if (query.isEmpty() || workoutName.contains(query, ignoreCase = true)) {
-                card.visibility = View.VISIBLE
-            } else {
-                card.visibility = View.GONE
+    private fun setupDeleteButton() {
+        btnDelete.setOnClickListener {
+            val selectedIds = historyAdapter.getSelectedIds()
+            if (selectedIds.isEmpty()) {
+                Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            AlertDialog.Builder(this)
+                .setTitle("Delete History")
+                .setMessage("Are you sure you want to delete ${selectedIds.size} item(s)?")
+                .setPositiveButton("Delete") { _, _ ->
+                    deleteSelectedItems(selectedIds)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
+    }
+
+    private fun deleteSelectedItems(ids: List<Int>) {
+        val url = ApiConfig.DELETE_WORKOUT_HISTORY_URL
+        val idsString = ids.joinToString(",")
+
+        val request = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getBoolean("success")) {
+                        Toast.makeText(this, "Deleted successfully", Toast.LENGTH_SHORT).show()
+                        historyAdapter.clearSelection()
+                        btnDelete.visibility = View.GONE
+                        fetchWorkoutHistory()
+                    } else {
+                        Toast.makeText(this, "Failed to delete", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { error ->
+                error.printStackTrace()
+                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams() = hashMapOf("ids" to idsString)
+        }
+
+        Volley.newRequestQueue(this).add(request)
+    }
+
+    private fun fetchWorkoutHistory() {
+        val userId = sessionManager.getUserId() ?: ""
+        val url = ApiConfig.GET_WORKOUT_HISTORY_URL
+
+        val request = object : StringRequest(
+            Method.POST, url,
+            { response ->
+                Log.d("WorkoutHistory", "Response: $response")
+
+                if (response.isNullOrEmpty()) {
+                    // 1. Handle the error case
+                    Toast.makeText(this, "Empty response from server", Toast.LENGTH_SHORT).show()
+                    emptyState.visibility = View.VISIBLE
+                    workoutHistoryRecyclerView.visibility = View.GONE
+                    // REMOVED: return@StringRequest
+                } else {
+                    // 2. Put the success logic inside this 'else' block
+                    try {
+                        val json = JSONObject(response)
+                        if (json.getBoolean("success")) {
+                            val workoutsArray = json.getJSONArray("workouts")
+                            historyList.clear()
+
+                            for (i in 0 until workoutsArray.length()) {
+                                val obj = workoutsArray.getJSONObject(i)
+                                historyList.add(
+                                    WorkoutHistoryItem(
+                                        id = obj.getInt("id"),
+                                        exerciseName = obj.getString("exercise_name"),
+                                        reps = obj.getInt("reps"),
+                                        sets = obj.getInt("sets"),
+                                        weight = obj.getInt("weight"),
+                                        duration = obj.getInt("duration"),
+                                        restTime = obj.getInt("rest_time"),
+                                        completedDate = obj.getLong("completed_date")
+                                    )
+                                )
+                            }
+
+                            historyAdapter.updateWorkouts(historyList)
+
+                            if (historyList.isEmpty()) {
+                                emptyState.visibility = View.VISIBLE
+                                workoutHistoryRecyclerView.visibility = View.GONE
+                            } else {
+                                emptyState.visibility = View.GONE
+                                workoutHistoryRecyclerView.visibility = View.VISIBLE
+                            }
+                        } else {
+                            Toast.makeText(
+                                this,
+                                json.optString("message", "Failed to load history"),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            emptyState.visibility = View.VISIBLE
+                            workoutHistoryRecyclerView.visibility = View.GONE
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(
+                            this,
+                            "Error parsing response: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        emptyState.visibility = View.VISIBLE
+                        workoutHistoryRecyclerView.visibility = View.GONE
+                    }
+                }
+            },
+            { error ->
+                error.printStackTrace()
+                Log.e("WorkoutHistory", "Network error: ${error.message}")
+                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
+                emptyState.visibility = View.VISIBLE
+                workoutHistoryRecyclerView.visibility = View.GONE
+            }
+        ) {
+            override fun getParams() = hashMapOf("user_id" to userId)
+        }
+
+        Volley.newRequestQueue(this).add(request)
     }
 
     private fun applyTheme() {
         val prefs = getSharedPreferences("ThemePrefs", MODE_PRIVATE)
         val isDarkMode = prefs.getBoolean("isDarkMode", false)
 
-        val rootLayout = findViewById<ScrollView>(R.id.main)
-        if (isDarkMode) {
-            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
-        } else {
-            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
-        }
+        findViewById<android.widget.RelativeLayout>(R.id.main).setBackgroundResource(
+            if (isDarkMode) R.drawable.zenfit_background
+            else R.drawable.zenfit_background_light
+        )
     }
 
     override fun onResume() {
         super.onResume()
         applyTheme()
+    }
+
+    override fun onBackPressed() {
+        if (historyAdapter.isSelectionMode) {
+            historyAdapter.clearSelection()
+            btnDelete.visibility = View.GONE
+        } else {
+            super.onBackPressed()
+        }
     }
 }
