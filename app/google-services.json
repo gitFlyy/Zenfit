@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "636803426621",
+    "firebase_url": "https://sociallysmd-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "sociallysmd",
+    "storage_bucket": "sociallysmd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636803426621:android:92f0a756647edf49657d54",
+        "android_client_info": {
+          "package_name": "com.example.socially"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIJp4vCl0OUBFpX0dVtGXiPdThq22Xpts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636803426621:android:da6519a707f8f3c0657d54",
+        "android_client_info": {
+          "package_name": "com.example.zenfit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIJp4vCl0OUBFpX0dVtGXiPdThq22Xpts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

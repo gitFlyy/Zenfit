@@ -7,55 +7,40 @@ include 'config.php';
 
 $response = array();
 
-if (isset($_POST['user_id'], $_POST['username'], $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['weight'], $_POST['height'])) {
+if (isset($_POST['user_id'], $_POST['weight'], $_POST['height'], $_POST['daily_activity_minutes'])) {
     $user_id = trim($_POST['user_id']);
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
     $weight = floatval($_POST['weight']);
     $height = trim($_POST['height']);
-    $profile_image = isset($_POST['profile_image']) ? $_POST['profile_image'] : null;
+    $activity = intval($_POST['daily_activity_minutes']);
 
-    if (empty($user_id) || empty($username) || empty($email)) {
+    if (empty($user_id)) {
         $response['statuscode'] = 400;
         $response['status'] = 'error';
-        $response['message'] = 'Required fields are missing';
+        $response['message'] = 'User ID is required';
         echo json_encode($response);
         exit();
     }
 
-    // Update query with profile_image
-    if ($profile_image !== null && !empty($profile_image)) {
-        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, first_name = ?, last_name = ?, weight = ?, height = ?, profile_image = ? WHERE id = ?");
-        if (!$stmt) {
-            $response['statuscode'] = 500;
-            $response['status'] = 'error';
-            $response['message'] = 'Database error: ' . $conn->error;
-            echo json_encode($response);
-            exit();
-        }
-        $stmt->bind_param("ssssdsss", $username, $email, $first_name, $last_name, $weight, $height, $profile_image, $user_id);
-    } else {
-        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, first_name = ?, last_name = ?, weight = ?, height = ? WHERE id = ?");
-        if (!$stmt) {
-            $response['statuscode'] = 500;
-            $response['status'] = 'error';
-            $response['message'] = 'Database error: ' . $conn->error;
-            echo json_encode($response);
-            exit();
-        }
-        $stmt->bind_param("ssssdss", $username, $email, $first_name, $last_name, $weight, $height, $user_id);
+    $stmt = $conn->prepare("UPDATE users SET weight = ?, height = ?, daily_activity_minutes = ? WHERE id = ?");
+    
+    if (!$stmt) {
+        $response['statuscode'] = 500;
+        $response['status'] = 'error';
+        $response['message'] = 'Database error: ' . $conn->error;
+        echo json_encode($response);
+        exit();
     }
+
+    $stmt->bind_param("dsis", $weight, $height, $activity, $user_id);
 
     if ($stmt->execute()) {
         $response['statuscode'] = 200;
         $response['status'] = 'success';
-        $response['message'] = 'Account updated successfully';
+        $response['message'] = 'Setup completed successfully';
     } else {
         $response['statuscode'] = 500;
         $response['status'] = 'error';
-        $response['message'] = 'Failed to update account: ' . $stmt->error;
+        $response['message'] = 'Failed to update: ' . $stmt->error;
     }
 
     $stmt->close();

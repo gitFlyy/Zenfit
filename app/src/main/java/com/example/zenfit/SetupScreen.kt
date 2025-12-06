@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -122,7 +123,7 @@ class SetupScreen : AppCompatActivity() {
         val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val isDarkMode = prefs.getBoolean("isDarkMode", false)
 
-        val rootLayout = findViewById<RelativeLayout>(R.id.main)
+        val rootLayout = findViewById<LinearLayout>(R.id.main)
         if (isDarkMode) {
             rootLayout.setBackgroundResource(R.drawable.zenfit_background)
         } else {

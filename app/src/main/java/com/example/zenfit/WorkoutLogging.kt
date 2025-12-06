@@ -529,7 +529,6 @@ class WorkoutLogging : AppCompatActivity() {
         val userId = sessionManager.getUserId() ?: ""
         val url = ApiConfig.SAVE_WORKOUT_HISTORY_URL
 
-        // Generate random calories between 0-500
         val caloriesBurned = (0..500).random()
 
         val request = object : StringRequest(
@@ -538,6 +537,9 @@ class WorkoutLogging : AppCompatActivity() {
                 try {
                     val json = JSONObject(response)
                     if (json.getBoolean("success")) {
+                        // Send push notification after successful save
+                        sendWorkoutCompletionNotification(exercise, caloriesBurned)
+
                         Toast.makeText(this, "Exercise completed! Burned $caloriesBurned calories", Toast.LENGTH_SHORT).show()
 
                         exercises.removeAt(currentExerciseIndex)
@@ -582,6 +584,40 @@ class WorkoutLogging : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
+
+    private fun sendWorkoutCompletionNotification(exercise: Exercise, caloriesBurned: Int) {
+        val userId = sessionManager.getUserId() ?: return
+        val url = ApiConfig.SEND_WORKOUT_NOTIFICATION_URL
+
+        val request = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        // Notification sent successfully
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            },
+            { error ->
+                error.printStackTrace()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                return hashMapOf(
+                    "user_id" to userId,
+                    "exercise_name" to exercise.name,
+                    "calories_burned" to caloriesBurned.toString(),
+                    "sets" to (exercise.completedSets + 1).toString()
+                )
+            }
+        }
+
+        Volley.newRequestQueue(this).add(request)
+    }
+
 
 
 

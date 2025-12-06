@@ -28,6 +28,8 @@ object ApiConfig {
     const val SAVE_WORKOUT_HISTORY_URL = "$BASE_URL/save_workout_history.php"
     const val GET_WORKOUT_HISTORY_URL = "${BASE_URL}get_workout_history.php"
     const val DELETE_WORKOUT_HISTORY_URL = "${BASE_URL}delete_workout_history.php"
+    const val SETUP_ACCOUNT_URL = "${BASE_URL}setup_account.php"
     const val DELETE_WORKOUT_URL = "${BASE_URL}delete_workout.php"
-
+    const val UPDATE_FCM_TOKEN_URL = "http://10.0.2.2/zenfitbackend/update_fcm_token.php"
+    const val SEND_WORKOUT_NOTIFICATION_URL = "http://10.0.2.2/zenfitbackend/send_workout_notification.php"
 }

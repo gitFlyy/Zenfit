@@ -19,7 +19,8 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import java.util.Calendar
 import kotlin.or
-
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.FirebaseApp
 class Signup2 : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
@@ -28,6 +29,8 @@ class Signup2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_signup2)
+        FirebaseApp.initializeApp(this)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -106,12 +109,18 @@ class Signup2 : AppCompatActivity() {
 
                     if (statusCode == 200) {
                         val userData = jsonResponse.getJSONObject("user")
+                        val userId = userData.getString("id")
+
                         sessionManager.createLoginSession(
-                            userData.getString("id"),
+                            userId,
                             userData.getString("username"),
                             userData.getString("email"),
                             "$firstName $lastName"
                         )
+
+                        // Update FCM token after successful signup
+                        updateFcmTokenForNewUser(userId)
+
                         Toast.makeText(this, "Account created successfully!", Toast.LENGTH_LONG).show()
                         val intent = Intent(this, SetupScreen::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -154,6 +163,43 @@ class Signup2 : AppCompatActivity() {
 
         requestQueue.add(stringRequest)
     }
+
+    private fun updateFcmTokenForNewUser(userId: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d("Signup2", "FCM Token retrieved: $token")
+
+                val url = ApiConfig.UPDATE_FCM_TOKEN_URL
+                val request = object : StringRequest(
+                    Request.Method.POST, url,
+                    { response ->
+                        try {
+                            val json = JSONObject(response)
+                            if (json.getString("status") == "success") {
+                                Log.d("Signup2", "FCM token saved successfully")
+                            }
+                        } catch (e: Exception) {
+                            Log.e("Signup2", "FCM token save error: ${e.message}")
+                        }
+                    },
+                    { error ->
+                        Log.e("Signup2", "FCM token network error: ${error.message}")
+                    }
+                ) {
+                    override fun getParams() = hashMapOf(
+                        "userId" to userId,
+                        "fcmToken" to token
+                    )
+                }
+
+                Volley.newRequestQueue(this).add(request)
+            } else {
+                Log.e("Signup2", "Failed to retrieve FCM token: ${task.exception?.message}")
+            }
+        }
+    }
+
 
     private fun applyTheme() {
         val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
