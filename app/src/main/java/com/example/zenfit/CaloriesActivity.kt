@@ -2,6 +2,7 @@ package com.example.zenfit
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ScrollView
@@ -14,8 +15,12 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
-import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.plusAssign
+import kotlin.printStackTrace
+import kotlin.ranges.rangeTo
+import kotlin.text.clear
+import kotlin.toString
 
 class CaloriesActivity : AppCompatActivity() {
 
@@ -23,6 +28,9 @@ class CaloriesActivity : AppCompatActivity() {
     private lateinit var calorieValue: TextView
     private lateinit var editCalories: EditText
     private lateinit var btnAddCalories: ImageButton
+    private lateinit var workoutHistoryRecyclerView: RecyclerView
+    private lateinit var emptyState: TextView
+    private lateinit var historyAdapter: WorkoutHistoryAdapter
     private val workoutHistoryList = mutableListOf<WorkoutHistoryItem>()
     private var totalCalories = 0
 
@@ -32,21 +40,26 @@ class CaloriesActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            finish()
-        }
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
         calorieValue = findViewById(R.id.calorieValue)
         editCalories = findViewById(R.id.editCalories)
         btnAddCalories = findViewById(R.id.btnAddCalories)
+        workoutHistoryRecyclerView = findViewById(R.id.workoutHistoryRecyclerView)
+        emptyState = findViewById(R.id.emptyState)
 
-        btnAddCalories.setOnClickListener {
-            addManualCalories()
-        }
+        setupRecyclerView()
 
-        fetchWorkoutHistory()
+        btnAddCalories.setOnClickListener { addManualCalories() }
+
+        fetchTodayWorkoutHistory()
         applyTheme()
+    }
+
+    private fun setupRecyclerView() {
+        historyAdapter = WorkoutHistoryAdapter(workoutHistoryList) { }
+        workoutHistoryRecyclerView.adapter = historyAdapter
+        workoutHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun addManualCalories() {
@@ -61,7 +74,7 @@ class CaloriesActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchWorkoutHistory() {
+    private fun fetchTodayWorkoutHistory() {
         val userId = sessionManager.getUserId() ?: ""
         val url = ApiConfig.GET_WORKOUT_HISTORY_URL
 
@@ -71,37 +84,47 @@ class CaloriesActivity : AppCompatActivity() {
                 try {
                     val json = JSONObject(response)
                     if (json.getBoolean("success")) {
-                        val workoutsArray = json.getJSONArray("workouts")
+                        val workoutsArray = json.getJSONArray("history")
                         workoutHistoryList.clear()
                         totalCalories = 0
 
+                        val todayStart = getTodayStartTimestamp()
+                        val todayEnd = getTodayEndTimestamp()
+
                         for (i in 0 until workoutsArray.length()) {
                             val obj = workoutsArray.getJSONObject(i)
-                            val calories = calculateCalories(
-                                obj.getInt("reps"),
-                                obj.getInt("sets"),
-                                obj.getInt("weight"),
-                                obj.getInt("duration")
-                            )
-                            totalCalories += calories
+                            val completedDate = obj.getLong("completed_date")
 
-                            workoutHistoryList.add(
-                                WorkoutHistoryItem(
-                                    id = obj.getInt("id"),
-                                    exerciseName = obj.getString("exercise_name"),
-                                    reps = obj.getInt("reps"),
-                                    sets = obj.getInt("sets"),
-                                    weight = obj.getInt("weight"),
-                                    duration = obj.getInt("duration"),
-                                    restTime = obj.getInt("rest_time"),
-                                    calories = calories,
-                                    completedDate = obj.getLong("completed_date")
+                            if (completedDate in todayStart..todayEnd) {
+                                val caloriesBurned = obj.optInt("calories_burned", 0)
+                                totalCalories += caloriesBurned
+
+                                workoutHistoryList.add(
+                                    WorkoutHistoryItem(
+                                        id = obj.getInt("id"),
+                                        exerciseName = obj.getString("exercise_name"),
+                                        reps = obj.getInt("reps"),
+                                        sets = obj.getInt("sets"),
+                                        weight = obj.getInt("weight"),
+                                        duration = obj.getInt("duration"),
+                                        restTime = obj.getInt("rest_time"),
+                                        caloriesBurned = caloriesBurned,
+                                        completedDate = completedDate
+                                    )
                                 )
-                            )
+                            }
                         }
 
                         calorieValue.text = totalCalories.toString()
-                        updateWorkoutCards()
+                        historyAdapter.updateWorkouts(workoutHistoryList)
+
+                        if (workoutHistoryList.isEmpty()) {
+                            emptyState.visibility = View.VISIBLE
+                            workoutHistoryRecyclerView.visibility = View.GONE
+                        } else {
+                            emptyState.visibility = View.GONE
+                            workoutHistoryRecyclerView.visibility = View.VISIBLE
+                        }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -119,72 +142,39 @@ class CaloriesActivity : AppCompatActivity() {
         Volley.newRequestQueue(this).add(request)
     }
 
-    private fun calculateCalories(reps: Int, sets: Int, weight: Int, duration: Int): Int {
-        // Formula: (reps × sets × weight × 0.05) + (duration × 0.1)
-        val weightCalories = (reps * sets * weight * 0.05).toInt()
-        val durationCalories = (duration * 0.1).toInt()
-        return weightCalories + durationCalories
+
+    private fun getTodayStartTimestamp(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 
-    private fun updateWorkoutCards() {
-        // Group by day
-        val today = Calendar.getInstance()
-        val todayWorkouts = mutableListOf<WorkoutHistoryItem>()
-        val yesterdayWorkouts = mutableListOf<WorkoutHistoryItem>()
-        val olderWorkouts = mutableListOf<WorkoutHistoryItem>()
-
-        for (workout in workoutHistoryList) {
-            val workoutCal = Calendar.getInstance()
-            workoutCal.timeInMillis = workout.completedDate
-
-            val daysDiff = ((today.timeInMillis - workout.completedDate) / (1000 * 60 * 60 * 24)).toInt()
-
-            when (daysDiff) {
-                0 -> todayWorkouts.add(workout)
-                1 -> yesterdayWorkouts.add(workout)
-                else -> olderWorkouts.add(workout)
-            }
-        }
-
-        // Update first card (Today)
-        if (todayWorkouts.isNotEmpty()) {
-            val todayTotal = todayWorkouts.sumOf { it.calories }
-            val totalReps = todayWorkouts.sumOf { it.reps * it.sets }
-
-            findViewById<TextView>(R.id.calorieValue).text = todayTotal.toString()
-            findViewById<TextView>(R.id.exerciseName1).text = todayWorkouts.firstOrNull()?.exerciseName ?: "Push ups"
-        }
-
-        // Update second card (Yesterday/Tuesday)
-        if (yesterdayWorkouts.isNotEmpty()) {
-            val yesterdayTotal = yesterdayWorkouts.sumOf { it.calories }
-            findViewById<TextView>(R.id.exerciseName2).text = yesterdayWorkouts.firstOrNull()?.exerciseName ?: "Squats"
-        }
-
-        // Update third card (Older)
-        if (olderWorkouts.isNotEmpty()) {
-            val olderTotal = olderWorkouts.sumOf { it.calories }
-            findViewById<TextView>(R.id.exerciseName3).text = olderWorkouts.firstOrNull()?.exerciseName ?: "Deadlift"
-        }
+    private fun getTodayEndTimestamp(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        return calendar.timeInMillis
     }
 
     private fun applyTheme() {
         val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val isDarkMode = prefs.getBoolean("isDarkMode", false)
 
-        val rootLayout = findViewById<ScrollView>(R.id.main)
-        if (isDarkMode) {
-            rootLayout.setBackgroundResource(R.drawable.zenfit_background)
-        } else {
-            rootLayout.setBackgroundResource(R.drawable.zenfit_background_light)
-        }
+        findViewById<ScrollView>(R.id.main).setBackgroundResource(
+            if (isDarkMode) R.drawable.zenfit_background
+            else R.drawable.zenfit_background_light
+        )
     }
+
 
     override fun onResume() {
         super.onResume()
         applyTheme()
-        fetchWorkoutHistory()
+        fetchTodayWorkoutHistory()
     }
 }
-
-

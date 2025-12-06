@@ -233,27 +233,15 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/noOfSessions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Duration:\n12 Hours"
+                        android:text="Sessions:\n0"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"
                         android:layout_marginEnd="24dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Steps:\n2837"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:layout_marginEnd="24dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Distance:\n2.4 km"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <Button

@@ -157,7 +157,7 @@ class WorkoutHistory : AppCompatActivity() {
                                         weight = obj.getInt("weight"),
                                         duration = obj.getInt("duration"),
                                         restTime = obj.getInt("rest_time"),
-                                        calories = obj.optInt("calories_burned", 0),
+                                        caloriesBurned = obj.optInt("calories_burned", 0),
                                         completedDate = obj.getLong("completed_date")
                                     )
                                 )

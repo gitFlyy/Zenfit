@@ -15,6 +15,9 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
+import java.util.Calendar
+import kotlin.printStackTrace
+import kotlin.ranges.rangeTo
 
 class Home : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
@@ -42,7 +45,7 @@ class Home : AppCompatActivity() {
         val navAdd = findViewById<ImageButton>(R.id.navAdd)
         val navCalendar = findViewById<ImageButton>(R.id.navCalendar)
         val navProfile = findViewById<ImageButton>(R.id.navProfile)
-
+        fetchTodayCalories()
         settingsCard.setOnClickListener {
             val intent = Intent(this, Settings::class.java)
             startActivity(intent)
@@ -93,6 +96,71 @@ class Home : AppCompatActivity() {
             val intent = Intent(this, Profile::class.java)
             startActivity(intent)
         }
+    }
+    private fun fetchTodayCalories() {
+        val userId = sessionManager.getUserId() ?: ""
+        val url = ApiConfig.GET_WORKOUT_HISTORY_URL
+
+        val request = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getBoolean("success")) {
+                        val workoutsArray = json.getJSONArray("history")
+                        var totalCalories = 0
+                        var sessionCount = 0
+
+                        val todayStart = getTodayStartTimestamp()
+                        val todayEnd = getTodayEndTimestamp()
+
+                        for (i in 0 until workoutsArray.length()) {
+                            val obj = workoutsArray.getJSONObject(i)
+                            val completedDate = obj.getLong("completed_date")
+
+                            if (completedDate in todayStart..todayEnd) {
+                                totalCalories += obj.optInt("calories_burned", 0)
+                                sessionCount++
+                            }
+                        }
+
+                        val caloriesValue = findViewById<TextView>(R.id.caloriesValue)
+                        caloriesValue.text = "$totalCalories kCal"
+
+                        val noOfSessions = findViewById<TextView>(R.id.noOfSessions)
+                        noOfSessions.text = "Sessions:\n$sessionCount"
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            },
+            { error ->
+                error.printStackTrace()
+            }
+        ) {
+            override fun getParams() = hashMapOf("user_id" to userId)
+        }
+
+        Volley.newRequestQueue(this).add(request)
+    }
+
+
+    private fun getTodayStartTimestamp(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun getTodayEndTimestamp(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        return calendar.timeInMillis
     }
 
     private fun loadMoodCard(moodCard: ImageView) {
@@ -162,5 +230,6 @@ class Home : AppCompatActivity() {
         val welcomeText = findViewById<TextView>(R.id.welcomeText)
         val username = sessionManager.prefs.getString(SessionManager.KEY_USERNAME, "User")
         welcomeText.text = "Welcome back, $username!"
+        fetchTodayCalories()
     }
 }

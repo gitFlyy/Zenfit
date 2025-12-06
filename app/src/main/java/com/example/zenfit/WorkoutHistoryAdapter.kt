@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.get
+import kotlin.collections.remove
+import kotlin.div
 
 class WorkoutHistoryAdapter(
     private var workouts: List<WorkoutHistoryItem>,
@@ -49,11 +52,13 @@ class WorkoutHistoryAdapter(
         holder.repsText.text = "${workout.reps} reps"
         holder.setsText.text = "${workout.sets} sets"
 
-        // Show/hide checkbox based on selection mode
+        // Find and set calories TextView
+        val caloriesText: TextView? = holder.itemView.findViewById(R.id.caloriesText)
+        caloriesText?.text = "${workout.caloriesBurned} cal"
+
         holder.checkboxSelect.visibility = if (isSelectionMode) View.VISIBLE else View.GONE
         holder.checkboxSelect.isChecked = selectedItems.contains(workout.id)
 
-        // Handle checkbox clicks
         holder.checkboxSelect.setOnCheckedChangeListener(null)
         holder.checkboxSelect.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -64,7 +69,6 @@ class WorkoutHistoryAdapter(
             onSelectionChanged(selectedItems.toList())
         }
 
-        // Handle item long press to enable selection mode
         holder.itemView.setOnLongClickListener {
             if (!isSelectionMode) {
                 isSelectionMode = true
@@ -74,13 +78,13 @@ class WorkoutHistoryAdapter(
             true
         }
 
-        // Handle item click in selection mode
         holder.itemView.setOnClickListener {
             if (isSelectionMode) {
                 holder.checkboxSelect.isChecked = !holder.checkboxSelect.isChecked
             }
         }
     }
+
 
     override fun getItemCount() = filteredWorkouts.size
 
