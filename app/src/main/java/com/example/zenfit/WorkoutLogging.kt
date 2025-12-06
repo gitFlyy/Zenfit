@@ -1,6 +1,7 @@
 package com.example.zenfit
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.*
@@ -11,8 +12,17 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
+import kotlin.compareTo
+import kotlin.dec
+import kotlin.div
 import kotlin.printStackTrace
 import kotlin.text.clear
+import kotlin.text.compareTo
+import kotlin.text.get
+import kotlin.text.set
+import kotlin.text.toInt
+import kotlin.times
+import kotlin.toString
 
 class WorkoutLogging : AppCompatActivity() {
 
@@ -37,7 +47,6 @@ class WorkoutLogging : AppCompatActivity() {
     private lateinit var btnFavorite: ImageButton
     private lateinit var btnPlayPause: ImageButton
     private lateinit var workoutAdapter: WorkoutVerticalAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_logging)
@@ -185,9 +194,87 @@ class WorkoutLogging : AppCompatActivity() {
     }
     private fun setupListeners() {
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
-        completedSetsValue.setOnClickListener {
-            completeSet()
+
+        findViewById<ImageButton>(R.id.navHome).setOnClickListener {
+            startActivity(Intent(this, Home::class.java))
+            finish()
         }
+
+        findViewById<ImageButton>(R.id.navWorkout).setOnClickListener {
+            startActivity(Intent(this, WorkoutLibrary::class.java))
+            finish()
+        }
+
+        findViewById<ImageButton>(R.id.navAdd).setOnClickListener {
+            startActivity(Intent(this, UploadPost::class.java))
+            finish()
+        }
+
+        findViewById<ImageButton>(R.id.navCalendar).setOnClickListener {
+            startActivity(Intent(this, CalendarActivity::class.java))
+            finish()
+        }
+
+        findViewById<ImageButton>(R.id.navProfile).setOnClickListener {
+            startActivity(Intent(this, Profile::class.java))
+            finish()
+        }
+
+        // Set navigation buttons
+        findViewById<ImageButton>(R.id.btnNext).setOnClickListener {
+            if (exercises.isEmpty()) return@setOnClickListener
+
+            val current = exercises[currentExerciseIndex]
+
+            // Check if there are sets remaining
+            if (current.sets <= 0) {
+                Toast.makeText(this, "Already at the last set", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Move to next set - decrease total sets
+            exercises[currentExerciseIndex] = current.copy(
+                completedSets = current.completedSets + 1,
+                sets = current.sets - 1
+            )
+            completedSetsValue.text = "${exercises[currentExerciseIndex].completedSets}"
+            setsValue.text = exercises[currentExerciseIndex].sets.toString()
+
+            // Reset reps for the next set
+            currentReps = current.reps
+            repsValue.text = currentReps.toString()
+
+            resetTimer()
+            Toast.makeText(this, "Moved to next set", Toast.LENGTH_SHORT).show()
+        }
+
+
+        findViewById<ImageButton>(R.id.btnPrevious).setOnClickListener {
+            if (exercises.isEmpty()) return@setOnClickListener
+
+            val current = exercises[currentExerciseIndex]
+
+            if (current.completedSets > 0) {
+                // Increase total sets and decrease completed sets
+                exercises[currentExerciseIndex] = current.copy(
+                    completedSets = current.completedSets - 1,
+                    sets = current.sets + 1
+                )
+                completedSetsValue.text = "${exercises[currentExerciseIndex].completedSets}"
+                setsValue.text = exercises[currentExerciseIndex].sets.toString()
+
+                currentReps = current.reps
+                repsValue.text = currentReps.toString()
+
+                resetTimer()
+                Toast.makeText(this, "Moved to previous set", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Already at first set", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        // Reps and Sets controls
         findViewById<ImageButton>(R.id.btnIncreaseReps).setOnClickListener {
             if (exercises.isNotEmpty()) {
                 val current = exercises[currentExerciseIndex]
@@ -234,22 +321,9 @@ class WorkoutLogging : AppCompatActivity() {
 
         btnPlayPause.setOnClickListener { toggleTimer() }
 
-        findViewById<ImageButton>(R.id.btnNext).setOnClickListener {
-            if (currentExerciseIndex < exercises.size - 1) {
-                currentExerciseIndex++
-                updateUI()
-                resetTimer()
-            }
-        }
-
-        findViewById<ImageButton>(R.id.btnPrevious).setOnClickListener {
-            if (currentExerciseIndex > 0) {
-                currentExerciseIndex--
-                updateUI()
-                resetTimer()
-            }
-        }
+        // REMOVE THE DUPLICATE LISTENERS THAT WERE HERE
     }
+
     private fun completeSet() {
         if (exercises.isEmpty()) return
 
@@ -332,7 +406,7 @@ class WorkoutLogging : AppCompatActivity() {
         val exercise = exercises[currentExerciseIndex]
         exerciseName.text = exercise.name
         repsDisplay.text = "Reps: ${exercise.reps}"
-        completedSetsValue.text = "${exercise.completedSets}/${exercise.sets}"
+        completedSetsValue.text = "${exercise.completedSets}"
         weightLabel.text = "Weight: ${exercise.weight}lbs"
         restTime.text = "Rest: ${exercise.restTime} seconds"
         repsValue.text = exercise.reps.toString()
@@ -354,14 +428,157 @@ class WorkoutLogging : AppCompatActivity() {
         val seconds = totalSeconds % 60
         return String.format("%d:%02d", minutes, seconds)
     }
-
+    private var isWorkoutRunning = false // Track if doing workout or resting
+    private var currentReps = 0 // Track current reps remaining
 
     private fun toggleTimer() {
         if (isTimerRunning) {
             pauseTimer()
         } else {
-            startTimer()
+            startWorkoutTimer()
         }
+    }
+
+    private fun startWorkoutTimer() {
+        if (exercises.isEmpty()) return
+
+        val exercise = exercises[currentExerciseIndex]
+
+        // Initialize reps if starting fresh
+        if (currentReps == 0) {
+            currentReps = exercise.reps
+        }
+
+        if (currentReps <= 0) {
+            Toast.makeText(this, "Complete the rest period first", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        isWorkoutRunning = true
+        val totalTime = exercise.duration * 1000L
+
+        // Set SeekBar max to duration
+        timerSeekBar.max = exercise.duration
+
+        countDownTimer = object : CountDownTimer(totalTime - currentTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                currentTime = totalTime - millisUntilFinished
+                val seconds = (currentTime / 1000).toInt()
+                val minutes = seconds / 60
+                val secs = seconds % 60
+                currentTimeText.text = String.format("%d:%02d", minutes, secs)
+                // Progress from 0 to duration
+                timerSeekBar.progress = seconds
+            }
+
+            override fun onFinish() {
+                // One rep completed
+                currentReps--
+                repsValue.text = currentReps.toString()
+                currentTime = 0L
+                timerSeekBar.progress = 0
+
+                if (currentReps > 0) {
+                    // More reps to do - auto start next rep
+                    Toast.makeText(this@WorkoutLogging, "Rep completed! Next rep starting...", Toast.LENGTH_SHORT).show()
+                    startWorkoutTimer()
+                } else {
+                    // All reps done - complete set and start rest
+                    completeSetAndRest()
+                }
+            }
+        }.start()
+
+        isTimerRunning = true
+        btnPlayPause.setImageResource(R.drawable.btnplaypause_img)
+    }
+
+    private fun completeSetAndRest() {
+        if (exercises.isEmpty()) return
+
+        val current = exercises[currentExerciseIndex]
+
+        // Check if there are more sets BEFORE modifying
+        val hasMoreSets = current.sets > 1
+
+        // Increase completed sets and decrease total sets
+        exercises[currentExerciseIndex] = current.copy(
+            completedSets = current.completedSets + 1,
+            sets = current.sets - 1
+        )
+
+        // Update both displays
+        completedSetsValue.text = "${exercises[currentExerciseIndex].completedSets}"
+        setsValue.text = exercises[currentExerciseIndex].sets.toString()
+
+        if (hasMoreSets) {
+            // More sets remaining - start rest timer
+            Toast.makeText(this, "Set completed! Rest time started", Toast.LENGTH_SHORT).show()
+            startRestTimer()
+        } else {
+            // All sets completed
+            isTimerRunning = false
+            isWorkoutRunning = false
+            btnPlayPause.setImageResource(R.drawable.play)
+            Toast.makeText(this, "All sets completed! Great job!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
+    private fun startRestTimer() {
+        if (exercises.isEmpty()) return
+
+        val exercise = exercises[currentExerciseIndex]
+        isWorkoutRunning = false
+        currentTime = 0L
+        val restMillis = exercise.restTime * 1000L
+
+        countDownTimer = object : CountDownTimer(restMillis, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val seconds = (millisUntilFinished / 1000).toInt()
+                val minutes = seconds / 60
+                val secs = seconds % 60
+                currentTimeText.text = String.format("%d:%02d", minutes, secs)
+                timerSeekBar.progress = exercise.restTime - seconds
+            }
+
+            override fun onFinish() {
+                // Reset for next set
+                currentReps = exercise.reps
+                repsValue.text = currentReps.toString()
+                currentTime = 0L
+                timerSeekBar.progress = 0
+                isTimerRunning = false
+                btnPlayPause.setImageResource(R.drawable.play)
+                Toast.makeText(this@WorkoutLogging, "Rest completed! Ready for next set", Toast.LENGTH_SHORT).show()
+            }
+        }.start()
+
+        isTimerRunning = true
+        btnPlayPause.setImageResource(R.drawable.btnplaypause_img)
+    }
+
+    private fun pauseTimer() {
+        countDownTimer?.cancel()
+        isTimerRunning = false
+        btnPlayPause.setImageResource(R.drawable.play)
+    }
+
+    private fun resetTimer() {
+        countDownTimer?.cancel()
+        currentTime = 0L
+        isTimerRunning = false
+        isWorkoutRunning = false
+
+        if (exercises.isNotEmpty()) {
+            currentReps = exercises[currentExerciseIndex].reps
+            repsValue.text = currentReps.toString()
+        }
+
+        currentTimeText.text = "0:00"
+        timerSeekBar.progress = 0
+        btnPlayPause.setImageResource(R.drawable.play)
     }
 
     private fun startTimer() {
@@ -382,6 +599,7 @@ class WorkoutLogging : AppCompatActivity() {
 
             override fun onFinish() {
                 isTimerRunning = false
+                btnPlayPause.setImageResource(R.drawable.play)
                 Toast.makeText(this@WorkoutLogging, "Rest time completed!", Toast.LENGTH_SHORT).show()
             }
         }.start()
@@ -390,20 +608,7 @@ class WorkoutLogging : AppCompatActivity() {
         btnPlayPause.setImageResource(R.drawable.btnplaypause_img)
     }
 
-    private fun pauseTimer() {
-        countDownTimer?.cancel()
-        isTimerRunning = false
-        btnPlayPause.setImageResource(R.drawable.btnplaypause_img)
-    }
 
-    private fun resetTimer() {
-        countDownTimer?.cancel()
-        currentTime = 0L
-        isTimerRunning = false
-        currentTimeText.text = "0:00"
-        timerSeekBar.progress = 0
-        btnPlayPause.setImageResource(R.drawable.btnplaypause_img)
-    }
 
     private fun applyTheme() {
         val prefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)

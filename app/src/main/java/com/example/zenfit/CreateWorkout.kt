@@ -37,7 +37,7 @@ class CreateWorkout : AppCompatActivity() {
         // Generate durations from 30 seconds to 60 minutes with 30-second intervals
         val durations = mutableListOf<String>()
         for (i in 1..120) { // 120 * 30 seconds = 60 minutes
-            val totalSeconds = i * 30
+            val totalSeconds = i * 15
             val minutes = totalSeconds / 60
             val seconds = totalSeconds % 60
 
