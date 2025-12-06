@@ -18,16 +18,38 @@ import org.json.JSONObject
 import java.util.Calendar
 import kotlin.printStackTrace
 import kotlin.ranges.rangeTo
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlin.printStackTrace
+import kotlin.text.compareTo
 
 class Home : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
-
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted - get FCM token and update server
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    updateFCMToken(token)
+                }
+            }
+            Toast.makeText(this, "Notifications enabled", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Notifications disabled. You won't receive workout completion alerts.", Toast.LENGTH_LONG).show()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         sessionManager = SessionManager(this)
-
+        checkNotificationPermission()
         // Top cards
         val settingsCard = findViewById<ImageView>(R.id.settingsCard)
         val moodCard = findViewById<ImageView>(R.id.moodCard)
@@ -96,6 +118,58 @@ class Home : AppCompatActivity() {
             val intent = Intent(this, Profile::class.java)
             startActivity(intent)
         }
+    }
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission already granted - ensure FCM token is updated
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val token = task.result
+                            updateFCMToken(token)
+                        }
+                    }
+                }
+                else -> {
+                    // Request permission
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            // For Android 12 and below, permission is granted automatically
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    updateFCMToken(token)
+                }
+            }
+        }
+    }
+
+    private fun updateFCMToken(token: String) {
+        val userId = sessionManager.getUserId() ?: return
+
+        val request = object : StringRequest(
+            Request.Method.POST,
+            ApiConfig.UPDATE_FCM_TOKEN_URL,
+            { response ->
+                // Token updated successfully
+            },
+            { error ->
+                error.printStackTrace()
+            }
+        ) {
+            override fun getParams() = hashMapOf(
+                "userId" to userId,
+                "fcmToken" to token
+            )
+        }
+
+        Volley.newRequestQueue(this).add(request)
     }
     private fun fetchTodayCalories() {
         val userId = sessionManager.getUserId() ?: ""
