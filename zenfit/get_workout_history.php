@@ -14,9 +14,9 @@ $stmt->bind_param("s", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$workouts = [];
+$history = [];
 while ($row = $result->fetch_assoc()) {
-    $workouts[] = [
+    $history[] = [
         'id' => $row['id'],
         'exercise_name' => $row['exercise_name'],
         'reps' => $row['reps'],
@@ -24,11 +24,12 @@ while ($row = $result->fetch_assoc()) {
         'weight' => $row['weight'],
         'duration' => $row['duration'],
         'rest_time' => $row['rest_time'],
+        'calories_burned' => $row['calories_burned'], // Add this line
         'completed_date' => $row['completed_date']
     ];
 }
 
-echo json_encode(['success' => true, 'workouts' => $workouts]);
+echo json_encode(['success' => true, 'history' => $history]);
 
 $stmt->close();
 $conn->close();

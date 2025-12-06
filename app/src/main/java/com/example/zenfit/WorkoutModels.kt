@@ -31,5 +31,6 @@ data class WorkoutHistoryItem(
     val weight: Int,
     val duration: Int,
     val restTime: Int,
+    val calories: Int,
     val completedDate: Long
 )

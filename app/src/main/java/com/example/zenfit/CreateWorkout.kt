@@ -34,34 +34,35 @@ class CreateWorkout : AppCompatActivity() {
     private fun setupViews() {
         val durationSpinner = findViewById<Spinner>(R.id.spinnerDuration)
 
-        // Generate durations from 30 seconds to 60 minutes with 30-second intervals
+        // Generate durations from 15 seconds to 60 minutes with 15-second intervals
         val durations = mutableListOf<String>()
-        for (i in 1..120) { // 120 * 30 seconds = 60 minutes
+        for (i in 1..240) { // 240 * 15 seconds = 60 minutes
             val totalSeconds = i * 15
             val minutes = totalSeconds / 60
             val seconds = totalSeconds % 60
 
             durations.add(when {
-                minutes == 0 -> "${seconds}s"
-                seconds == 0 -> "${minutes}min"
-                else -> "${minutes}min ${seconds}s"
+                totalSeconds < 60 -> "$totalSeconds sec"
+                seconds == 0 -> "$minutes min"
+                else -> "$minutes min $seconds sec"
             })
         }
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, durations)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         durationSpinner.adapter = adapter
-        durationSpinner.setSelection(59) // Default to 30 minutes (position 59)
+        durationSpinner.setSelection(119) // Default to 30 minutes (position 119: 120 * 15 = 1800 seconds)
 
         durationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                // Calculate total seconds: (position + 1) * 30
-                selectedDuration = (position + 1) * 30
+                // Calculate duration in seconds: (position + 1) * 15
+                selectedDuration = (position + 1) * 15
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
+
 
 
     private fun setupListeners() {

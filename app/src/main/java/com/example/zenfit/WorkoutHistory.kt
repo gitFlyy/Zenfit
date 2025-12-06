@@ -17,6 +17,8 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
+import kotlin.printStackTrace
+import kotlin.text.clear
 
 class WorkoutHistory : AppCompatActivity() {
 
@@ -118,7 +120,11 @@ class WorkoutHistory : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
-
+    private fun calculateCalories(reps: Int, sets: Int, weight: Int, duration: Int): Int {
+        val weightCalories = (reps * sets * weight * 0.05).toInt()
+        val durationCalories = (duration * 0.1).toInt()
+        return weightCalories + durationCalories
+    }
     private fun fetchWorkoutHistory() {
         val userId = sessionManager.getUserId() ?: ""
         val url = ApiConfig.GET_WORKOUT_HISTORY_URL
@@ -129,17 +135,15 @@ class WorkoutHistory : AppCompatActivity() {
                 Log.d("WorkoutHistory", "Response: $response")
 
                 if (response.isNullOrEmpty()) {
-                    // 1. Handle the error case
                     Toast.makeText(this, "Empty response from server", Toast.LENGTH_SHORT).show()
                     emptyState.visibility = View.VISIBLE
                     workoutHistoryRecyclerView.visibility = View.GONE
-                    // REMOVED: return@StringRequest
                 } else {
-                    // 2. Put the success logic inside this 'else' block
                     try {
                         val json = JSONObject(response)
                         if (json.getBoolean("success")) {
-                            val workoutsArray = json.getJSONArray("workouts")
+                            // Changed from "workouts" to "history" to match get_workout_history.php
+                            val workoutsArray = json.getJSONArray("history")
                             historyList.clear()
 
                             for (i in 0 until workoutsArray.length()) {
@@ -153,6 +157,7 @@ class WorkoutHistory : AppCompatActivity() {
                                         weight = obj.getInt("weight"),
                                         duration = obj.getInt("duration"),
                                         restTime = obj.getInt("rest_time"),
+                                        calories = obj.optInt("calories_burned", 0),
                                         completedDate = obj.getLong("completed_date")
                                     )
                                 )
@@ -168,21 +173,13 @@ class WorkoutHistory : AppCompatActivity() {
                                 workoutHistoryRecyclerView.visibility = View.VISIBLE
                             }
                         } else {
-                            Toast.makeText(
-                                this,
-                                json.optString("message", "Failed to load history"),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(this, json.optString("message", "Failed to load history"), Toast.LENGTH_SHORT).show()
                             emptyState.visibility = View.VISIBLE
                             workoutHistoryRecyclerView.visibility = View.GONE
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        Toast.makeText(
-                            this,
-                            "Error parsing response: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                         emptyState.visibility = View.VISIBLE
                         workoutHistoryRecyclerView.visibility = View.GONE
                     }
@@ -190,7 +187,6 @@ class WorkoutHistory : AppCompatActivity() {
             },
             { error ->
                 error.printStackTrace()
-                Log.e("WorkoutHistory", "Network error: ${error.message}")
                 Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
                 emptyState.visibility = View.VISIBLE
                 workoutHistoryRecyclerView.visibility = View.GONE
@@ -201,6 +197,7 @@ class WorkoutHistory : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
+
 
     private fun applyTheme() {
         val prefs = getSharedPreferences("ThemePrefs", MODE_PRIVATE)

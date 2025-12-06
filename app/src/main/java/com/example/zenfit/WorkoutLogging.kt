@@ -529,22 +529,23 @@ class WorkoutLogging : AppCompatActivity() {
         val userId = sessionManager.getUserId() ?: ""
         val url = ApiConfig.SAVE_WORKOUT_HISTORY_URL
 
+        // Generate random calories between 0-500
+        val caloriesBurned = (0..500).random()
+
         val request = object : StringRequest(
             Request.Method.POST, url,
             { response ->
                 try {
                     val json = JSONObject(response)
                     if (json.getBoolean("success")) {
-                        Toast.makeText(this, "Exercise completed! Saved to history", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Exercise completed! Burned $caloriesBurned calories", Toast.LENGTH_SHORT).show()
 
-                        // Remove completed exercise from current list
                         exercises.removeAt(currentExerciseIndex)
 
                         if (exercises.isEmpty()) {
                             Toast.makeText(this, "All exercises completed!", Toast.LENGTH_LONG).show()
-                            finish() // Close activity
+                            finish()
                         } else {
-                            // Adjust index if needed
                             if (currentExerciseIndex >= exercises.size) {
                                 currentExerciseIndex = exercises.size - 1
                             }
@@ -556,7 +557,7 @@ class WorkoutLogging : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(this, "Error saving to history: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             },
             { error ->
@@ -569,10 +570,11 @@ class WorkoutLogging : AppCompatActivity() {
                     "user_id" to userId,
                     "exercise_name" to exercise.name,
                     "reps" to exercise.reps.toString(),
-                    "sets" to (exercise.completedSets + 1).toString(), // Total sets completed
+                    "sets" to (exercise.completedSets + 1).toString(),
                     "weight" to exercise.weight.toString(),
                     "duration" to exercise.duration.toString(),
                     "rest_time" to exercise.restTime.toString(),
+                    "calories_burned" to caloriesBurned.toString(),
                     "completed_date" to System.currentTimeMillis().toString()
                 )
             }
@@ -580,6 +582,7 @@ class WorkoutLogging : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
+
 
 
     private fun startRestTimer() {
