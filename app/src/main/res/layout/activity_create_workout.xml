@@ -118,8 +118,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsup" />
 
                 <TextView
                     android:id="@+id/repsValue"
@@ -136,10 +135,9 @@
                     android:id="@+id/btnRepsDown"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnRepsUp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/btnrepsdown" />
             </RelativeLayout>
 
             <!-- Sets -->
@@ -164,8 +162,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsup" />
 
                 <TextView
                     android:id="@+id/setsValue"
@@ -184,8 +181,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnSetsUp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsup" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -221,8 +217,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsup" />
 
                 <TextView
                     android:id="@+id/weightValue"
@@ -241,8 +236,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnWeightUp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsdown" />
             </RelativeLayout>
 
             <!-- Rest Timer -->
@@ -267,8 +261,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsup" />
 
                 <TextView
                     android:id="@+id/restValue"
@@ -287,8 +280,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/btnRestUp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="#B0B0B0" />
+                    android:src="@drawable/btnrepsdown" />
             </RelativeLayout>
         </LinearLayout>
 

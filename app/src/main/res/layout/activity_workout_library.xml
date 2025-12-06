@@ -123,13 +123,6 @@
                     android:text="Sets:\n15"
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise:\n5"
-                    android:textColor="#B0B0B0"
-                    android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -172,7 +165,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Duration:\n30 minutes"
+                    android:text="Duration:\n2 minutes"
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
 
@@ -192,12 +185,6 @@
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise:\n5"
-                    android:textColor="#B0B0B0"
-                    android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -260,12 +247,7 @@
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise:\n5"
-                    android:textColor="#B0B0B0"
-                    android:textSize="12sp" />
+
             </LinearLayout>
         </RelativeLayout>
 
@@ -328,12 +310,6 @@
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise:\n5"
-                    android:textColor="#B0B0B0"
-                    android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -396,12 +372,6 @@
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise:\n5"
-                    android:textColor="#B0B0B0"
-                    android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -464,12 +434,6 @@
                     android:textColor="#B0B0B0"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise:\n5"
-                    android:textColor="#B0B0B0"
-                    android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
 

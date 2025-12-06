@@ -20,4 +20,10 @@ object ApiConfig {
     const val GET_MEALS_BY_DATE_URL = "${BASE_URL}get_meals_by_date.php"
     const val GET_MEAL_IDEAS_URL = "${BASE_URL}get_meal_ideas.php"
     const val UPLOAD_POST_URL = "${BASE_URL}upload_post.php"
+
+    const val GET_EXERCISES_URL = "${BASE_URL}get_exercises.php"
+    const val UPDATE_EXERCISE_URL = "${BASE_URL}update_exercise.php"
+    const val CREATE_WORKOUT_URL = "${BASE_URL}create_workout.php"
+    const val GET_WORKOUTS_URL = "${BASE_URL}get_workouts.php"
+
 }
