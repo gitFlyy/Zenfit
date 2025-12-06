@@ -221,7 +221,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/baseline_skip_previous_24" />
+                    android:src="@drawable/btnPrevious_img" />
 
                 <ImageButton
                     android:id="@+id/btnPlayPause"
@@ -229,14 +229,14 @@
                     android:layout_height="56dp"
                     android:layout_marginHorizontal="24dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/baseline_pause_24" />
+                    android:src="@drawable/btnPlayPause_img" />
 
                 <ImageButton
                     android:id="@+id/btnNext"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/baseline_skip_next_24" />
+                    android:src="@drawable/btnNext_img" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -270,13 +270,12 @@
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnDecreaseReps"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:text="-"
-                        android:textColor="@color/orange"
-                        android:textSize="24sp" />
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/btnIncreaseReps_img" />
 
                     <TextView
                         android:id="@+id/repsValue"
@@ -291,13 +290,12 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnIncreaseReps"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:text="+"
-                        android:textColor="@color/orange"
-                        android:textSize="24sp" />
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/plus_img" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -321,13 +319,12 @@
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnDecreaseSets"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:text="-"
-                        android:textColor="@color/orange"
-                        android:textSize="24sp" />
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/btnIncreaseReps_img" />
 
                     <TextView
                         android:id="@+id/setsValue"
@@ -342,13 +339,12 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnIncreaseSets"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:text="+"
-                        android:textColor="@color/orange"
-                        android:textSize="24sp" />
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/plus_img" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

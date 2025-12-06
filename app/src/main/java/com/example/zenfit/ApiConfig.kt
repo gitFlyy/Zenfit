@@ -1,7 +1,7 @@
 package com.example.zenfit
 
 object ApiConfig {
-    private const val BASE_URL = "http://192.168.10.14/zenfit/"
+    private const val BASE_URL = "http://192.168.18.170/zenfit/"
     const val LOGIN_URL = "${BASE_URL}login.php"
     const val SIGNUP_URL = "${BASE_URL}signup.php"
     const val FORGOT_PASSWORD_URL = "${BASE_URL}forgot_password.php"
