@@ -34,11 +34,6 @@
 ## 🏗 System Architecture
 
 Zenfit utilizes a **Client-Server-Cloud** model:
-
-<p align="center">
-  <img src="./assets/architecture-diagram.png" alt="System Architecture Diagram" width="70%" />
-</p>
-
 1.  **Mobile Client:** Handles UI logic and local caching via `CacheManager`.
 2.  **REST API:** PHP endpoints handle business logic and MySQL interaction.
 3.  **Firebase:** Operates as the signaling layer for push notifications.
