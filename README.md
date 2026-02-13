@@ -1,4 +1,4 @@
-# Zenfit 🧘‍♂️💪
+# Zenfit 
 
 **Zenfit** is an all-in-one health and wellness platform for Android. It goes beyond simple tracking by integrating nutrition logging, custom workout architecture, and mood analytics into a single, cohesive experience. 
 
