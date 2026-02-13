@@ -3,7 +3,7 @@
 **Zenfit** is an all-in-one health and wellness platform for Android. It goes beyond simple tracking by integrating nutrition logging, custom workout architecture, and mood analytics into a single, cohesive experience. 
 
 <p align="center">
-  <img src="./assets/zenfit-hero.png" alt="Zenfit App Interface" width="80%" />
+  <img src="./assets/zenfit-hero.png" alt="Zenfit App Interface" width="45%" />
 </p>
 
 ---
@@ -16,8 +16,8 @@
 - **History & Trends:** View a comprehensive history of past meals to maintain consistency.
 
 <p align="center">
-  <img src="./assets/meal-tracking.png" alt="Meal Logging Feature" width="45%" />
-  <img src="./assets/workout-log.png" alt="Workout Logging UI" width="45%" />
+  <img src="./assets/meal-tracking.png" alt="Meal Logging Feature" width="32%" />
+  <img src="./assets/workout-log.png" alt="Workout Logging UI" width="32%" />
 </p>
 
 ### 🏋️‍♂️ Custom Workout Engine
@@ -28,12 +28,13 @@
 ### 🧠 Holistic Wellness
 - **Mood Tracking:** A dedicated mood screen to correlate physical activity with mental health.
 - **Push Notifications:** Real-time motivation and reminders delivered via **Firebase Cloud Messaging (FCM)**.
-
+- 
 ---
 
 ## 🏗 System Architecture
 
 Zenfit utilizes a **Client-Server-Cloud** model:
+
 1.  **Mobile Client:** Handles UI logic and local caching via `CacheManager`.
 2.  **REST API:** PHP endpoints handle business logic and MySQL interaction.
 3.  **Firebase:** Operates as the signaling layer for push notifications.
